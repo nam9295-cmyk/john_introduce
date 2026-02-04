@@ -1,0 +1,396 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "ip40p",
+      "x": 0,
+      "y": 0,
+      "name": "Neo-Brutalist Portfolio",
+      "width": 1440,
+      "fill": "#FFFFFF",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "0EXaP",
+          "name": "Header",
+          "width": "fill_container",
+          "height": 80,
+          "stroke": {
+            "thickness": {
+              "bottom": 4
+            },
+            "fill": "#000000"
+          },
+          "padding": [
+            0,
+            60
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "L1CvQ",
+              "name": "logo",
+              "fill": "#000000",
+              "content": "JD.26",
+              "fontFamily": "Outfit",
+              "fontSize": 32,
+              "fontWeight": "900"
+            },
+            {
+              "type": "frame",
+              "id": "sX9K8",
+              "name": "Nav",
+              "gap": 40,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "25VD2",
+                  "name": "link1",
+                  "fill": "#000000",
+                  "content": "WORKS",
+                  "fontFamily": "Outfit",
+                  "fontSize": 18,
+                  "fontWeight": "800"
+                },
+                {
+                  "type": "text",
+                  "id": "nThnv",
+                  "name": "link2",
+                  "fill": "#000000",
+                  "content": "LABS",
+                  "fontFamily": "Outfit",
+                  "fontSize": 18,
+                  "fontWeight": "800"
+                },
+                {
+                  "type": "text",
+                  "id": "aCu3n",
+                  "name": "link3",
+                  "fill": "#000000",
+                  "content": "ABOUT",
+                  "fontFamily": "Outfit",
+                  "fontSize": 18,
+                  "fontWeight": "800"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tlIBs",
+          "name": "Marquee",
+          "width": "fill_container",
+          "height": 60,
+          "fill": "#000000",
+          "stroke": {
+            "thickness": {
+              "bottom": 4
+            },
+            "fill": "#000000"
+          },
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "i9L7j",
+              "name": "marqueeText",
+              "fill": "#FFFFFF",
+              "content": "BREAKING BARRIERS  //  BREAKING BARRIERS  //  BREAKING BARRIERS  //  BREAKING BARRIERS  //  BREAKING BARRIERS",
+              "fontFamily": "Outfit",
+              "fontSize": 24,
+              "fontWeight": "900"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "4e4wG",
+          "name": "Bento Grid",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": 60,
+          "children": [
+            {
+              "type": "frame",
+              "id": "k8RE3",
+              "name": "Row 1",
+              "width": "fill_container",
+              "height": 400,
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "og7bV",
+                  "name": "Card 1",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "stroke": {
+                    "thickness": 4,
+                    "fill": "#000000"
+                  },
+                  "layout": "vertical",
+                  "padding": 24,
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Sxbyu",
+                      "name": "card1Title",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "3D SPATIAL\nEXPLORATION",
+                      "fontFamily": "Outfit",
+                      "fontSize": 48,
+                      "fontWeight": "900"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "A84Yk",
+                      "name": "Image",
+                      "width": "fill_container",
+                      "height": 200,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1770215371190.png",
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "HNY7g",
+                      "name": "card1Meta",
+                      "fill": "#71717A",
+                      "content": "THREE.JS / BLENDER",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gn01T",
+                  "name": "Card 2",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#000000",
+                  "stroke": {
+                    "thickness": 4,
+                    "fill": "#000000"
+                  },
+                  "layout": "vertical",
+                  "padding": 24,
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Enrai",
+                      "name": "card2Title",
+                      "fill": "#FFFFFF",
+                      "content": "NEO-DASH",
+                      "fontFamily": "Outfit",
+                      "fontSize": 24,
+                      "fontWeight": "900"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Anb48",
+                      "name": "Image",
+                      "width": "fill_container",
+                      "height": 120,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1770215378161.png",
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "scsfP",
+                      "name": "card2Meta",
+                      "fill": "#A1A1AA",
+                      "content": "REACT / TAILWIND",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "7vupi",
+              "name": "Row 2",
+              "width": "fill_container",
+              "height": 400,
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dJsnt",
+                  "name": "Card 3",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "stroke": {
+                    "thickness": 4,
+                    "fill": "#000000"
+                  },
+                  "layout": "vertical",
+                  "padding": 24,
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "t3naX",
+                      "name": "card3Title",
+                      "fill": "#000000",
+                      "content": "ALGO-VIZ",
+                      "fontFamily": "Outfit",
+                      "fontSize": 24,
+                      "fontWeight": "900"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xIWbu",
+                      "name": "Image",
+                      "width": "fill_container",
+                      "height": 120,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1770215386056.png",
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "qwP2e",
+                      "name": "card3Meta",
+                      "fill": "#71717A",
+                      "content": "D3.JS / TYPESCRIPT",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r00HE",
+                  "name": "Card 4",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "stroke": {
+                    "thickness": 4,
+                    "fill": "#000000"
+                  },
+                  "layout": "vertical",
+                  "padding": 24,
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ZK9nr",
+                      "name": "card4Title",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "CYBERNETIC\nINTERFACE",
+                      "fontFamily": "Outfit",
+                      "fontSize": 48,
+                      "fontWeight": "900"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PXH0H",
+                      "name": "Image",
+                      "width": "fill_container",
+                      "height": 200,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "./images/generated-1770215393634.png",
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "416V4",
+                      "name": "card4Meta",
+                      "fill": "#71717A",
+                      "content": "WEBGL / SHADERS",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "WlOaG",
+          "name": "Footer",
+          "width": "fill_container",
+          "height": 120,
+          "fill": "#000000",
+          "padding": 60,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "40u0j",
+              "name": "footerText",
+              "fill": "#FFFFFF",
+              "content": "© 2026 JOHN DOE. NO RIGHTS RESERVED.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "YJRCC",
+              "name": "footerLinks",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XD3KL",
+                  "name": "fLink1",
+                  "fill": "#FFFFFF",
+                  "content": "TWITTER",
+                  "fontFamily": "Outfit",
+                  "fontSize": 14,
+                  "fontWeight": "800"
+                },
+                {
+                  "type": "text",
+                  "id": "nlWsi",
+                  "name": "fLink2",
+                  "fill": "#FFFFFF",
+                  "content": "GITHUB",
+                  "fontFamily": "Outfit",
+                  "fontSize": 14,
+                  "fontWeight": "800"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
