@@ -142,10 +142,14 @@ const Portfolio = () => {
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const scrollLeft = e.currentTarget.scrollLeft;
-        // Card width is 85vw.
-        // Approximate calculation: scrollLeft / (width * 0.85)
-        // Or cleaner: calculate based on the first child's width if possible, but simplified math works for UX
-        const index = Math.round(scrollLeft / (window.innerWidth * 0.85));
+        // Item is 85vw.
+        const itemWidth = window.innerWidth * 0.85;
+
+        // Calculate index based on items size + gap (gap-4 = 16px)
+        const gap = 16;
+        const totalItemWidth = itemWidth + gap;
+
+        const index = Math.round(scrollLeft / totalItemWidth);
         setCurrentSlide(index);
     };
     return (
@@ -293,7 +297,7 @@ const Portfolio = () => {
                     {/* Masonry Grid (Slider on Mobile) */}
                     <div
                         onScroll={handleScroll}
-                        className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 md:block md:columns-3 md:gap-8 md:space-y-8 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden"
+                        className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 md:block md:columns-3 md:gap-8 md:space-y-8 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden pr-12 md:pr-0"
                     >
                         {(isExpanded ? LAB_ITEMS : LAB_ITEMS.slice(0, 6)).map((item, index, array) => {
                             const showDivider = isExpanded && (index === 0 || item.year !== array[index - 1].year);
@@ -316,13 +320,13 @@ const Portfolio = () => {
                                             </h3>
                                         </div>
                                     )}
-                                    <div className="min-w-[85vw] snap-center md:min-w-0 md:break-inside-avoid md:snap-align-none bg-white border-4 border-black p-4 hover:scale-[1.02] hover:shadow-[8px_8px_0px_0px_#edc5c4] transition-all duration-500 cursor-pointer grayscale-[0.5] contrast-[1.1] opacity-90 hover:grayscale-0 hover:opacity-100 group reveal-item">
+                                    <div className="min-w-[85vw] snap-center md:min-w-0 md:break-inside-avoid md:snap-align-none bg-white border-4 border-black p-4 group reveal-item lab-item">
                                         <div className={`bg-zinc-200 w-full ${item.height} mb-4 border-2 border-black relative overflow-hidden`}>
                                             <div className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold bg-black rounded-sm uppercase z-10 ${getCategoryColor(item.category)}`}>
                                                 {item.category || 'LAB'}
                                             </div>
                                             {item.imageUrl ? (
-                                                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover grayscale-[0.5] contrast-[1.1] opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" />
+                                                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className={`absolute inset-0 ${item.bgColor}`}></div>
                                             )}
@@ -337,23 +341,29 @@ const Portfolio = () => {
                         })}
                     </div>
 
+                    {/* Mobile Gallery Controls (Progress & Fraction) */}
+                    <div className="md:hidden mt-4 relative w-full mb-12">
+                        {/* Progress Bar Container */}
+                        <div className="w-full h-1 bg-gray-300 relative">
+                            <div
+                                className="absolute top-0 left-0 h-full bg-[#ccff00] transition-all duration-300"
+                                style={{ width: `${((currentSlide + 1) / (isExpanded ? LAB_ITEMS.length : 6)) * 100}%` }}
+                            />
+                        </div>
+
+                        {/* Fraction Indicator */}
+                        <div className="absolute right-0 top-3 border-2 border-black bg-white px-2 py-1 font-['Outfit'] font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            {currentSlide + 1} / {isExpanded ? LAB_ITEMS.length : 6}
+                        </div>
+                    </div>
+
                     {/* View All Button */}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="w-full py-8 border-4 border-black font-black text-2xl hover:bg-[#ccff00] hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all mb-20 mt-12 bg-white"
+                        className="w-full py-8 border-4 border-black font-black text-2xl hover:bg-[#ccff00] hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all mb-20 bg-white"
                     >
                         {isExpanded ? "CLOSE ARCHIVE" : `EXPLORE FULL ARCHIVE (${LAB_ITEMS.length}+)`}
                     </button>
-
-                    {/* Pagination Dots (Mobile Only) */}
-                    <div className="flex justify-center gap-2 mt-4 md:hidden">
-                        {[0, 1, 2, 3, 4, 5].map((index) => (
-                            <div
-                                key={index}
-                                className={`w-3 h-3 transition-colors duration-300 ${currentSlide === index ? 'bg-black' : 'bg-gray-300'}`}
-                            />
-                        ))}
-                    </div>
                 </div>
             </section>
 
