@@ -3,6 +3,8 @@ import { ArrowUpRight, Menu, X, ArrowRight } from 'lucide-react';
 import Marquee from 'react-fast-marquee';
 import { PROJECTS, LAB_ITEMS, ABOUT_DATA, Project, LocalizedString } from './data';
 
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqedzblr";
+
 interface HoverVideoCardProps {
     title: string;
     category: string;
@@ -76,6 +78,16 @@ const Portfolio = () => {
     const [isIframeLoading, setIsIframeLoading] = useState(true);
     const [lang, setLang] = useState<'en' | 'ko'>('en');
     const [isAboutOpen, setIsAboutOpen] = useState(false);
+    const [isContactOpen, setIsContactOpen] = useState(false);
+    const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     // Translation Helper
     const t = (content?: LocalizedString) => {
@@ -106,14 +118,14 @@ const Portfolio = () => {
 
     // Lock body scroll when modal is open
     useEffect(() => {
-        if (selectedProject || isAboutOpen) {
+        if (selectedProject || isAboutOpen || isContactOpen) {
             document.body.style.overflow = 'hidden';
             setIsIframeLoading(true); // Reset loader on open
         } else {
             document.body.style.overflow = 'unset';
             setIsIframeLoading(true); // Reset loader on close too just in case
         }
-    }, [selectedProject, isAboutOpen]);
+    }, [selectedProject, isAboutOpen, isContactOpen]);
 
     // About Modal History/Back Button Logic
     useEffect(() => {
@@ -129,11 +141,58 @@ const Portfolio = () => {
         }
     }, [isAboutOpen]);
 
+    // Contact Modal History Logic
+    useEffect(() => {
+        if (isContactOpen) {
+            window.history.pushState({ contactOpen: true }, '');
+
+            const handlePopState = () => {
+                setIsContactOpen(false);
+            };
+
+            window.addEventListener('popstate', handlePopState);
+            return () => window.removeEventListener('popstate', handlePopState);
+        }
+    }, [isContactOpen]);
+
     const handleAboutClose = () => {
         if (window.history.state?.aboutOpen) {
             window.history.back();
         } else {
             setIsAboutOpen(false);
+        }
+    };
+
+    const handleContactClose = () => {
+        if (window.history.state?.contactOpen) {
+            window.history.back();
+        } else {
+            setIsContactOpen(false);
+        }
+    };
+
+    const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setFormStatus('submitting');
+        const formData = new FormData(e.currentTarget);
+
+        try {
+            const response = await fetch(FORMSPREE_ENDPOINT, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                setFormStatus('success');
+                // Optional: Close after a delay? Or let user close.
+            } else {
+                setFormStatus('error');
+            }
+        } catch (error) {
+            setFormStatus('error');
         }
     };
 
@@ -180,7 +239,7 @@ const Portfolio = () => {
 
             {/* Navigation */}
             <nav className="sticky top-0 z-50 bg-white border-b-4 border-black px-6 md:px-16 h-20 flex items-center justify-between">
-                <div className="font-['Outfit'] font-black text-3xl tracking-tighter">JD.26</div>
+                <div className="font-['Outfit'] font-black text-3xl tracking-tighter">JN.26</div>
                 <div className="flex items-center gap-4 md:gap-8">
                     <div className="hidden md:flex gap-10">
                         {['WORKS', 'LABS', 'ABOUT', 'CONTACT'].map((link) => (
@@ -188,12 +247,16 @@ const Portfolio = () => {
                                 key={link}
                                 href={`#${link.toLowerCase()}`}
                                 onClick={(e) => {
+                                    setIsMenuOpen(false);
                                     if (link === 'ABOUT') {
                                         e.preventDefault();
                                         setIsAboutOpen(true);
+                                    } else if (link === 'CONTACT') {
+                                        e.preventDefault();
+                                        setIsContactOpen(true);
                                     }
                                 }}
-                                className="font-['Outfit'] font-extrabold text-lg hover:underline decoration-4 underline-offset-4"
+                                className="font-['Outfit'] font-black text-6xl text-white hover:text-[#39ff14] transition-colors tracking-tighter"
                             >
                                 {link}
                             </a>
@@ -564,7 +627,7 @@ const Portfolio = () => {
                         {/* Header Section */}
                         <div className="border-b-4 border-black pb-12">
                             <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[0.8] uppercase">
-                                About<br />John Doe
+                                About<br />John Nam
                             </h1>
                             <p className="text-2xl md:text-4xl font-bold leading-tight max-w-4xl text-zinc-800">
                                 {t(ABOUT_DATA.slogan)}
@@ -591,9 +654,9 @@ const Portfolio = () => {
                             <div className="flex flex-col border-t-2 border-black">
                                 {ABOUT_DATA.timeline.map((item, i) => (
                                     <div key={i} className="flex flex-col md:flex-row md:items-baseline py-6 border-b-2 border-zinc-200 hover:bg-zinc-50 transition-colors group">
-                                        <div className="md:w-1/4 text-2xl font-black text-[#ccff00] group-hover:text-black transition-colors">{item.year}</div>
-                                        <div className="md:w-1/4 text-xl font-bold">{item.role}</div>
-                                        <div className="md:w-2/4 text-zinc-500 font-['Inter']">{lang === 'en' ? item.desc : item.descKo}</div>
+                                        <div className="md:w-1/4 text-2xl font-bold font-['Outfit'] text-[#ccff00] group-hover:text-black transition-colors">{item.year}</div>
+                                        <div className="md:w-1/4 text-xl font-bold font-['Outfit']">{item.role}</div>
+                                        <div className="md:w-2/4 text-zinc-500 font-['Inter'] font-normal">{lang === 'en' ? item.desc : item.descKo}</div>
                                     </div>
                                 ))}
                             </div>
@@ -665,6 +728,84 @@ const Portfolio = () => {
                 </div>
             )}
 
+            {/* Contact Modal */}
+            {isContactOpen && (
+                <div className="fixed inset-0 z-[60] bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-4 font-['Outfit'] animate-fadeIn">
+                    <div className="bg-white w-full max-w-2xl border-4 border-black relative shadow-[16px_16px_0px_0px_rgba(255,255,255,0.2)]">
+                        {/* Header */}
+                        <div className="bg-black text-white p-6 flex justify-between items-center border-b-4 border-black">
+                            <h2 className="text-3xl font-black tracking-tighter">CONTACT JOHN NAM</h2>
+                            <button onClick={handleContactClose} className="hover:text-[#ccff00] transition-colors">
+                                <X size={32} />
+                            </button>
+                        </div>
+
+                        {/* Form */}
+                        <div className="p-8 md:p-12">
+                            {formStatus === 'success' ? (
+                                <div className="text-center py-20">
+                                    <h3 className="text-4xl font-black mb-4">MESSAGE SENT! 🚀</h3>
+                                    <p className="text-xl font-bold text-zinc-600 mb-8">THANK YOU, JOHN WILL CONTACT YOU SOON!</p>
+                                    <button
+                                        onClick={handleContactClose}
+                                        className="border-2 border-black px-6 py-2 bg-[#ccff00] font-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                                    >
+                                        CLOSE
+                                    </button>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleContactSubmit} className="flex flex-col gap-6">
+                                    <div>
+                                        <label htmlFor="name" className="block font-black text-lg mb-2">NAME</label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            required
+                                            className="w-full border-4 border-black p-4 font-['Inter'] font-bold focus:outline-none focus:bg-zinc-100"
+                                            placeholder="YOUR NAME"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="block font-black text-lg mb-2">EMAIL</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            required
+                                            className="w-full border-4 border-black p-4 font-['Inter'] font-bold focus:outline-none focus:bg-zinc-100"
+                                            placeholder="YOUR@EMAIL.COM"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="message" className="block font-black text-lg mb-2">MESSAGE</label>
+                                        <textarea
+                                            name="message"
+                                            required
+                                            rows={5}
+                                            className="w-full border-4 border-black p-4 font-['Inter'] font-bold focus:outline-none focus:bg-zinc-100 resize-none"
+                                            placeholder="TELL ME ABOUT YOUR PROJECT..."
+                                        />
+                                    </div>
+
+                                    {formStatus === 'error' && (
+                                        <div className="bg-red-100 border-2 border-red-500 text-red-500 p-4 font-bold text-center">
+                                            SOMETHING WENT WRONG. PLEASE TRY AGAIN.
+                                        </div>
+                                    )}
+
+                                    <button
+                                        type="submit"
+                                        disabled={formStatus === 'submitting'}
+                                        className="mt-4 bg-[#ccff00] text-black border-4 border-black py-4 font-black text-2xl hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] active:shadow-none active:translate-x-0 active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {formStatus === 'submitting' ? 'SENDING...' : 'SEND MESSAGE'}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Footer */}
             <footer id="contact" className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black font-['Outfit']">
                 <div className="max-w-[1600px] mx-auto flex flex-col items-center text-center">
@@ -673,7 +814,11 @@ const Portfolio = () => {
 
                     {/* Main Action - Email Link */}
                     <a
-                        href="mailto:lab@verygood-chocolate.com"
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setIsContactOpen(true);
+                        }}
                         className="block w-full"
                     >
                         <h2 className="text-[5vw] md:text-[7vw] font-black leading-none hover:text-[#edc5c4] transition-colors duration-300 break-words">
@@ -681,30 +826,56 @@ const Portfolio = () => {
                         </h2>
                     </a>
 
-                    {/* Bottom Row */}
-                    <div className="w-full flex flex-col md:flex-row justify-between items-center gap-8 border-t-2 border-zinc-800 pt-8">
-                        {/* Copyright */}
-                        <div className="font-['Inter'] font-semibold text-sm tracking-wider text-zinc-500">
-                            © 2026 JOHN DOE.
-                        </div>
+                    {/* Bottom Row - 5 Columns */}
+                    <div className="w-full flex flex-col md:flex-row justify-between items-center gap-8 md:gap-0 border-t-2 border-zinc-800 pt-10 md:pt-12">
 
-                        {/* Socials */}
-                        <div className="flex gap-8">
-                            <a href="#" className="flex items-center gap-2 font-bold text-lg hover:text-[#39ff14] transition-colors">
-                                INSTAGRAM
-                            </a>
-                            <a href="#" className="flex items-center gap-2 font-bold text-lg hover:text-[#39ff14] transition-colors">
-                                GITHUB
-                            </a>
-                        </div>
-
-                        {/* Back to Top */}
+                        {/* 1. RESUME */}
                         <button
-                            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                            className="font-bold text-lg hover:text-[#39ff14] transition-colors"
+                            onClick={() => setIsAboutOpen(true)}
+                            className="font-['Outfit'] font-black text-lg md:text-xl tracking-wide hover:-translate-y-1 hover:translate-x-1 hover:shadow-[-4px_4px_0px_0px_#ccff00] transition-all duration-300"
                         >
-                            BACK TO TOP ↑
+                            RESUME
                         </button>
+
+                        {/* 2. INSTAGRAM */}
+                        <a
+                            href="https://www.instagram.com/verygood_john"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-['Outfit'] font-black text-lg md:text-xl tracking-wide hover:-translate-y-1 hover:translate-x-1 hover:shadow-[-4px_4px_0px_0px_#ccff00] transition-all duration-300"
+                        >
+                            INSTAGRAM
+                        </a>
+
+                        {/* 3. GITHUB */}
+                        <a
+                            href="https://github.com/nam9295-cmyk"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-['Outfit'] font-black text-lg md:text-xl tracking-wide hover:-translate-y-1 hover:translate-x-1 hover:shadow-[-4px_4px_0px_0px_#ccff00] transition-all duration-300"
+                        >
+                            GITHUB
+                        </a>
+
+                        {/* 4. LOCAL TIME */}
+                        <div className="flex flex-col items-center md:items-start group cursor-default">
+                            <div className="font-['Inter'] font-medium text-xs text-zinc-500 mb-1">DAEGU, KR</div>
+                            <div className="font-['Outfit'] font-black text-lg md:text-xl tracking-wider group-hover:text-[#39ff14] transition-colors">
+                                {currentTime.toLocaleTimeString('en-US', {
+                                    hour12: false,
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    timeZone: 'Asia/Seoul'
+                                })}
+                            </div>
+                        </div>
+
+                        {/* 5. AVAILABILITY */}
+                        <div className="flex items-center gap-2 font-['Outfit'] font-black text-lg md:text-xl tracking-wide cursor-default">
+                            <span className="text-[#ccff00] animate-pulse">●</span>
+                            AVAILABLE FOR PROJECTS
+                        </div>
+
                     </div>
                 </div>
             </footer>

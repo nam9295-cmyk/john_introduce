@@ -283,7 +283,9 @@ export const ABOUT_DATA = {
         ]
     },
     timeline: [
-        { year: "2024-PRES", role: "Creative Director & Dev", desc: "Very Goût / AI Development", descKo: "베리구 / AI 개발" },
+        { year: "2024-PRES", role: "Creative Director & Dev", desc: "Very Goût / Web Development", descKo: "베리굿 / 웹 개발" },
+        { year: "2023", role: "Creative Director", desc: "SUIN CO.LTD. / Pet Care Branding", descKo: "수인코 / 펫케어 브랜딩 & 전략" },
+        { year: "2021", role: "Design Freelancer", desc: "Digital Branding & Web Design", descKo: "디지털 브랜딩 & 웹 디자인" },
         { year: "2020", role: "Woodworker", desc: "Professional Craftsmanship / Ottchil", descKo: "전문 목공예 / 옻칠" },
         { year: "2014-2019", role: "Chef & Owner", desc: "F&B Management & Branding", descKo: "F&B 경영 및 브랜딩" },
         { year: "2012", role: "CEO", desc: "HWproject (Auto Parts Import)", descKo: "HWproject (자동차 부품 수입)" },
