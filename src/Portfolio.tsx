@@ -267,7 +267,8 @@ const Portfolio = () => {
                         </div>
 
                         {/* Visual */}
-                        <div className={`w-full ${selectedProject.type === 'media' ? 'h-auto' : 'h-[400px] md:h-[600px]'} border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
+                        {/* Visual */}
+                        <div className={`w-full ${selectedProject.type === 'interactive' ? 'h-[400px] md:h-[600px]' : 'h-auto aspect-video'} border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
                             {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
                                 <iframe
                                     src={selectedProject.embedUrl}
@@ -276,17 +277,6 @@ const Portfolio = () => {
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
                                 />
-                            ) : selectedProject.type === 'media' && selectedProject.gallery ? (
-                                <div className="flex flex-col gap-4">
-                                    {selectedProject.gallery.map((img, i) => (
-                                        <img
-                                            key={i}
-                                            src={img}
-                                            alt={`${selectedProject.title} ${i + 1}`}
-                                            className="w-full h-auto object-cover grayscale hover:grayscale-0 transition-grayscale duration-500"
-                                        />
-                                    ))}
-                                </div>
                             ) : (
                                 <video
                                     src={selectedProject.videoSrc}
@@ -308,15 +298,48 @@ const Portfolio = () => {
                                 </p>
                             </div>
                             <div>
-                                <a
-                                    href={selectedProject.link}
-                                    className="group flex items-center justify-between w-full border-2 border-white p-6 font-['Outfit'] font-black text-2xl hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300"
-                                >
-                                    <span>VISIT WEBSITE</span>
-                                    <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-                                </a>
+                                {selectedProject.link && selectedProject.link !== '#' && (
+                                    <a
+                                        href={selectedProject.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group flex items-center justify-between w-full border-2 border-white p-6 font-['Outfit'] font-black text-2xl hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300"
+                                    >
+                                        <span>VISIT WEBSITE</span>
+                                        <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                    </a>
+                                )}
                             </div>
                         </div>
+
+                        {/* Gallery / Rich Media Renderer (Full Width) */}
+                        {selectedProject.gallery && (
+                            <div className="mt-16 flex flex-col gap-8 w-full">
+                                {selectedProject.gallery.map((block, i) => (
+                                    <div key={i} className="w-full">
+                                        {block.type === 'text' && block.content && (
+                                            <div className="text-gray-400 text-sm mt-12 mb-4 font-mono uppercase tracking-widest border-l-2 border-gray-700 pl-4 whitespace-pre-line">
+                                                {block.content}
+                                            </div>
+                                        )}
+                                        {block.type === 'image' && block.src && (
+                                            <img
+                                                src={block.src}
+                                                alt={`${selectedProject.title} detail ${i}`}
+                                                className="w-full h-auto rounded-sm mb-2 border border-gray-800"
+                                            />
+                                        )}
+                                        {block.type === 'video' && block.src && (
+                                            <video
+                                                src={block.src}
+                                                autoPlay loop muted playsInline
+                                                className="w-full h-auto rounded-sm mb-2 border border-gray-800"
+                                            />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

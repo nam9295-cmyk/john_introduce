@@ -12,25 +12,56 @@ export interface Project {
     type?: 'interactive' | 'video' | 'image' | 'media';
     embedUrl?: string;
     github?: string;
-    gallery?: string[];
+    gallery?: GalleryBlock[];
+}
+
+export interface GalleryBlock {
+    type: 'image' | 'video' | 'text';
+    src?: string;      // For image/video
+    content?: string;  // For text
 }
 
 export const PROJECTS: Project[] = [
     {
         id: 1,
-        title: "3D SPATIAL ARTWORKS",
+        title: "HIBISCUS PACKAGING",
         category: "BLENDER / KEYSHOT",
         videoSrc: "/box.mp4",
         className: "md:col-span-2 border-4 border-black p-6 flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-300 bg-white group cursor-pointer relative overflow-hidden",
         isFeatured: true,
-        description: "Blender와 KeyShot을 활용한 3D 아트워크 컬렉션입니다. 3D 공간 구성과 텍스처링, 라이팅에 집중하여 작업했습니다.",
+        description: "An elegant packaging design for a premium hibiscus tea brand. The goal was to capture the organic and vibrant nature of the flower through texture and lighting.",
         link: "#",
-        tags: ["Blender", "KeyShot", "Photoshop", "3D Modeling"],
-        type: "media",
+        tags: ["Blender", "KeyShot", "Packaging Design", "3D Rendering"],
         gallery: [
-            "/images/art_01.jpg",
-            "/images/art_02.jpg",
-            "/images/art_03.jpg"
+            {
+                type: 'text',
+                content: "01. STRUCTURE DESIGN\nFirst, I designed the base geometry using Blender to ensure structural integrity."
+            },
+            { type: 'image', src: "/public/model.webp" },
+
+            {
+                type: 'text',
+                content: "02. MATERIAL & LIGHTING PROCESS\nUsing KeyShot, I experimented with various material nodes and lighting setups to achieve a realistic texture."
+            },
+            { type: 'video', src: "/public/process.mp4" },
+
+            {
+                type: 'text',
+                content: "03. VISUALIZATION\nThe final rendering focuses on the clean, minimal aesthetic of the brand."
+            },
+            { type: 'image', src: "/public/package.webp" },
+
+            {
+                type: 'text',
+                content: "04. PRODUCTION READY\nI also created the precise die-line (blueprint) for actual mass production."
+            },
+            { type: 'image', src: "/public/dieline.webp" },
+
+            {
+                type: 'text',
+                content: "05. CONTEXT\nA lifestyle mockup showing how the product looks in a real-world environment."
+            },
+            { type: 'image', src: "/public/lifestyle.webp" }
         ]
     },
     {
