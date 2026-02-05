@@ -75,6 +75,26 @@ const Portfolio = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isIframeLoading, setIsIframeLoading] = useState(true);
 
+    // Reveal Animation Observer
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '50px' // Start slightly before
+        });
+
+        const bgElements = document.querySelectorAll('.reveal-item');
+        bgElements.forEach((el) => observer.observe(el));
+
+        return () => observer.disconnect();
+    }, [isExpanded]); // Re-run when expanded changes to catch new lab items
+
     // Lock body scroll when modal is open
     useEffect(() => {
         if (selectedProject) {
@@ -147,7 +167,7 @@ const Portfolio = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:auto-rows-[400px]">
                     {PROJECTS.map((project) => (
                         project.isFeatured ? (
-                            <div key={project.id} className={project.className} onClick={() => setSelectedProject(project)}>
+                            <div key={project.id} className={`${project.className} reveal-item`} onClick={() => setSelectedProject(project)}>
                                 <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
                                     <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Abstract 3D" className="w-full h-full object-cover grayscale" />
                                 </div>
@@ -180,7 +200,7 @@ const Portfolio = () => {
                                 category={project.category}
                                 videoSrc={project.videoSrc}
                                 imageSrc={project.imageSrc}
-                                className={project.className}
+                                className={`${project.className} reveal-item`}
                                 videoHeight={project.videoHeight}
                                 onClick={() => setSelectedProject(project)}
                             />
@@ -194,7 +214,7 @@ const Portfolio = () => {
                 <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                     {/* Left: Headline */}
                     <div>
-                        <h2 className="font-['Outfit'] font-black text-6xl md:text-8xl leading-none md:leading-[0.9] tracking-tighter">
+                        <h2 className="font-['Outfit'] font-black text-6xl md:text-8xl leading-none md:leading-[0.9] tracking-tighter reveal-item">
                             BRIDGING<br />DESIGN &<br />TECHNOLOGY
                         </h2>
                     </div>
@@ -204,7 +224,7 @@ const Portfolio = () => {
                         <h3 className="font-['Outfit'] font-bold text-2xl mb-8 tracking-widest text-zinc-500">THE ARSENAL</h3>
                         <div className="flex flex-wrap gap-3">
                             {['Photoshop', 'Illustrator', 'After Effects', 'Premiere Pro', 'Blender', 'SketchUp', 'KeyShot 11', 'React', 'Tailwind', 'Antigravity', 'vibe coding'].map((tool) => (
-                                <span key={tool} className="border-2 border-white px-4 py-2 font-['Outfit'] font-bold text-lg tracking-wide hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300 cursor-default">
+                                <span key={tool} className="border-2 border-white px-4 py-2 font-['Outfit'] font-bold text-lg tracking-wide hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300 cursor-default reveal-item">
                                     {tool}
                                 </span>
                             ))}
@@ -217,7 +237,7 @@ const Portfolio = () => {
             <section id="labs" className="bg-white text-black py-20 px-6 md:px-16 border-t-4 border-black">
                 <div className="max-w-[1600px] mx-auto">
                     {/* Header */}
-                    <div className="border-b-4 border-black mb-12 pb-4">
+                    <div className="border-b-4 border-black mb-12 pb-4 reveal-item">
                         <h2 className="font-['Outfit'] font-black text-5xl md:text-7xl tracking-tighter mb-2">
                             LABORATORY // DAILY LOG
                         </h2>
@@ -252,7 +272,7 @@ const Portfolio = () => {
                                             </h3>
                                         </div>
                                     )}
-                                    <div className="min-w-[85vw] snap-center md:min-w-0 md:break-inside-avoid md:snap-align-none bg-white border-4 border-black p-4 hover:scale-[1.02] hover:shadow-[8px_8px_0px_0px_rgba(0,255,127,1)] transition-all duration-500 cursor-pointer grayscale-[0.5] contrast-[1.1] opacity-90 hover:grayscale-0 hover:opacity-100 group">
+                                    <div className="min-w-[85vw] snap-center md:min-w-0 md:break-inside-avoid md:snap-align-none bg-white border-4 border-black p-4 hover:scale-[1.02] hover:shadow-[8px_8px_0px_0px_#edc5c4] transition-all duration-500 cursor-pointer grayscale-[0.5] contrast-[1.1] opacity-90 hover:grayscale-0 hover:opacity-100 group reveal-item">
                                         <div className={`bg-zinc-200 w-full ${item.height} mb-4 border-2 border-black relative overflow-hidden`}>
                                             <div className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold bg-black rounded-sm uppercase z-10 ${getCategoryColor(item.category)}`}>
                                                 {item.category || 'LAB'}
