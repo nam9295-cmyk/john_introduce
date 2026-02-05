@@ -2,7 +2,8 @@ export interface Project {
     id: number;
     title: string;
     category: string;
-    videoSrc: string;
+    videoSrc?: string;
+    imageSrc?: string;
     className: string;
     videoHeight?: string;
     isFeatured?: boolean; // For the first card with distinctive layout
@@ -13,18 +14,20 @@ export interface Project {
     embedUrl?: string;
     github?: string;
     gallery?: GalleryBlock[];
+    hideModalVisual?: boolean;
 }
 
 export interface GalleryBlock {
-    type: 'image' | 'video' | 'text';
+    type: 'image' | 'video' | 'text' | 'code';
     src?: string;      // For image/video
-    content?: string;  // For text
+    content?: string;  // For text/code
+    language?: string; // For code
 }
 
 export const PROJECTS: Project[] = [
     {
         id: 1,
-        title: "HIBISCUS PACKAGING",
+        title: "VERY GOOD  PACKAGING",
         category: "BLENDER / KEYSHOT",
         videoSrc: "/box.mp4",
         className: "md:col-span-2 border-4 border-black p-6 flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-300 bg-white group cursor-pointer relative overflow-hidden",
@@ -32,6 +35,7 @@ export const PROJECTS: Project[] = [
         description: "An elegant packaging design for a premium hibiscus tea brand. The goal was to capture the organic and vibrant nature of the flower through texture and lighting.",
         link: "#",
         tags: ["Blender", "KeyShot", "Packaging Design", "3D Rendering"],
+        type: "media",
         gallery: [
             {
                 type: 'text',
@@ -78,13 +82,45 @@ export const PROJECTS: Project[] = [
     },
     {
         id: 3,
-        title: "BLOG\nDETECTOR",
-        category: "D3.JS / TYPESCRIPT",
+        title: "BLOG DETECTOR",
+        category: "PYTHON / SELENIUM / STREAMLIT",
         videoSrc: "/algo.mp4",
+        hideModalVisual: true,
         className: "md:col-span-1 bg-gray-200 text-black hover:bg-[#edc5c4] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
-        description: "Visualizing complex algorithms in real-time using D3.js. This tool helps developers understand data structures and sorting algorithms through interactive animations.",
-        link: "#",
-        tags: ["D3.js", "TypeScript", "Algorithms", "SVG"]
+        description: "A high-performance diagnostic tool for Naver Blog SEO. It automates data collection of visitor metrics, content quality, and real-time search engine rankings using Selenium and Streamlit.",
+        link: "https://blogcheck.streamlit.app/",
+        tags: ["D3.js", "Python", "Data Structure", "SVG"],
+        type: "media",
+        gallery: [
+            {
+                type: 'text',
+                content: "01. HYBRID TERMINAL INTERFACE\nDesigned a custom CSS-in-Streamlit terminal UI to provide a hacker-style UX while maintaining professional data visualization."
+            },
+            {
+                type: 'video',
+                src: "/detector.mp4"
+            },
+            {
+                type: 'text',
+                content: "02. REAL-TIME SEARCH EXPOSURE LOGIC\nThe core engine tracks keyword rankings by reverse-engineering mobile search results and calculating competitive scores."
+            },
+            {
+                type: 'code',
+                language: 'python',
+                content: `def check_search_exposure(blog_id, post_title):
+    # Extracts keywords and simulates mobile search to track ranking
+    search_url = f"https://m.search.naver.com/search.naver?query={encoded_query}"
+    driver.get(search_url)
+    
+    # Logic to identify ranking among top 20 results
+    result_links = driver.execute_script("return Array.from(document.querySelectorAll('a[href*=\"blog.naver.com\"]')).map(a => a.href)")
+    
+    for rank, link in enumerate(result_links):
+        if f"blog.naver.com/{blog_id}" in link:
+            return True, f"Ranked #{rank + 1} for keyword"
+    return False, "Not in top 20"`
+            }
+        ]
     },
     {
         id: 4,

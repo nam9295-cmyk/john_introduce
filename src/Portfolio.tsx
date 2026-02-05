@@ -6,13 +6,14 @@ import { PROJECTS, LAB_ITEMS, Project } from './data';
 interface HoverVideoCardProps {
     title: string;
     category: string;
-    videoSrc: string;
+    videoSrc?: string;
+    imageSrc?: string;
     className?: string;
     videoHeight?: string;
     onClick?: () => void;
 }
 
-const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoSrc, className, videoHeight, onClick }) => {
+const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoSrc, imageSrc, className, videoHeight, onClick }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     const handleMouseEnter = () => {
@@ -44,15 +45,23 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoS
                 <ArrowUpRight className="w-6 h-6" />
             </div>
             <div className={`${heightClass} w-full bg-zinc-800 my-4 border border-zinc-700 overflow-hidden relative`}>
-                <video
-                    ref={videoRef}
-                    src={videoSrc}
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300"
-                />
+                {videoSrc ? (
+                    <video
+                        ref={videoRef}
+                        src={videoSrc}
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300"
+                    />
+                ) : imageSrc ? (
+                    <img
+                        src={imageSrc}
+                        alt={title}
+                        className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                    />
+                ) : null}
             </div>
             <span className="font-['Inter'] font-semibold opacity-70 text-xs tracking-wide">{category}</span>
         </div>
@@ -164,6 +173,7 @@ const Portfolio = () => {
                                 title={project.title}
                                 category={project.category}
                                 videoSrc={project.videoSrc}
+                                imageSrc={project.imageSrc}
                                 className={project.className}
                                 videoHeight={project.videoHeight}
                                 onClick={() => setSelectedProject(project)}
@@ -267,27 +277,35 @@ const Portfolio = () => {
                         </div>
 
                         {/* Visual */}
-                        {/* Visual */}
-                        <div className={`w-full ${selectedProject.type === 'interactive' ? 'h-[400px] md:h-[600px]' : 'h-auto aspect-video'} border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
-                            {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
-                                <iframe
-                                    src={selectedProject.embedUrl}
-                                    title={selectedProject.title}
-                                    className="w-full h-full border-0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                />
-                            ) : (
-                                <video
-                                    src={selectedProject.videoSrc}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-grayscale duration-500"
-                                />
-                            )}
-                        </div>
+                        {/* Visual - Only render if media/iframe exists AND not hidden */}
+                        {!selectedProject.hideModalVisual && ((selectedProject.type === 'interactive' && selectedProject.embedUrl) || selectedProject.videoSrc || selectedProject.imageSrc) ? (
+                            <div className={`w-full ${selectedProject.type === 'interactive' ? 'h-[400px] md:h-[600px]' : 'h-auto aspect-video'} border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
+                                {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
+                                    <iframe
+                                        src={selectedProject.embedUrl}
+                                        title={selectedProject.title}
+                                        className="w-full h-full border-0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                ) : selectedProject.videoSrc ? (
+                                    <video
+                                        src={selectedProject.videoSrc}
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-grayscale duration-500"
+                                    />
+                                ) : selectedProject.imageSrc ? (
+                                    <img
+                                        src={selectedProject.imageSrc}
+                                        alt={selectedProject.title}
+                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-grayscale duration-500"
+                                    />
+                                ) : null}
+                            </div>
+                        ) : null}
 
                         {/* Details */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 font-['Inter']">
@@ -335,6 +353,16 @@ const Portfolio = () => {
                                                 autoPlay loop muted playsInline
                                                 className="w-full h-auto rounded-sm mb-2 border border-gray-800"
                                             />
+                                        )}
+                                        {block.type === 'code' && block.content && (
+                                            <div className="bg-[#1e1e1e] border border-gray-700 rounded-md p-4 overflow-x-auto my-4 text-left">
+                                                {block.language && (
+                                                    <div className="text-xs font-mono text-gray-500 mb-2 uppercase tracking-wider">{block.language}</div>
+                                                )}
+                                                <pre className="font-mono text-sm leading-relaxed text-[#d4d4d4] whitespace-pre-wrap break-all">
+                                                    <code>{block.content}</code>
+                                                </pre>
+                                            </div>
                                         )}
                                     </div>
                                 ))}
