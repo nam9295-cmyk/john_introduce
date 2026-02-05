@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { ArrowUpRight, Menu, X, ArrowRight } from 'lucide-react';
 import Marquee from 'react-fast-marquee';
-import { PROJECTS, LAB_ITEMS } from './data';
+import { PROJECTS, LAB_ITEMS, Project } from './data';
 
 interface HoverVideoCardProps {
     title: string;
@@ -9,9 +9,10 @@ interface HoverVideoCardProps {
     videoSrc: string;
     className?: string;
     videoHeight?: string;
+    onClick?: () => void;
 }
 
-const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoSrc, className, videoHeight }) => {
+const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoSrc, className, videoHeight, onClick }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     const handleMouseEnter = () => {
@@ -36,6 +37,7 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoS
             className={`${baseClasses} ${themeClasses}`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onClick={onClick}
         >
             <div className="flex justify-between items-start">
                 <h2 className="font-['Outfit'] font-black text-3xl whitespace-pre-line">{title}</h2>
@@ -60,6 +62,16 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoS
 const Portfolio = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+    // Lock body scroll when modal is open
+    useEffect(() => {
+        if (selectedProject) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [selectedProject]);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const scrollLeft = e.currentTarget.scrollLeft;
@@ -122,7 +134,7 @@ const Portfolio = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:auto-rows-[400px]">
                     {PROJECTS.map((project) => (
                         project.isFeatured ? (
-                            <div key={project.id} className={project.className}>
+                            <div key={project.id} className={project.className} onClick={() => setSelectedProject(project)}>
                                 <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
                                     <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Abstract 3D" className="w-full h-full object-cover grayscale" />
                                 </div>
@@ -154,6 +166,7 @@ const Portfolio = () => {
                                 videoSrc={project.videoSrc}
                                 className={project.className}
                                 videoHeight={project.videoHeight}
+                                onClick={() => setSelectedProject(project)}
                             />
                         )
                     ))}
@@ -226,6 +239,87 @@ const Portfolio = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Project Detail Modal */}
+            {selectedProject && (
+                <div className="fixed inset-0 z-[60] bg-black text-white overflow-y-auto font-['Outfit'] animate-fadeIn">
+                    <button
+                        onClick={() => setSelectedProject(null)}
+                        className="sticky top-6 float-right right-6 z-50 p-2 bg-black border-2 border-white rounded-full hover:bg-white hover:text-black transition-colors duration-300 transform hover:scale-110"
+                    >
+                        <X size={32} />
+                    </button>
+
+                    <div className="max-w-[1200px] mx-auto p-6 md:p-16 pt-20 md:pt-20 flex flex-col gap-12">
+                        {/* Header */}
+                        <div>
+                            <div className="flex flex-wrap gap-3 mb-6">
+                                {selectedProject.tags.map((tag, i) => (
+                                    <span key={i} className="border border-zinc-600 px-3 py-1 text-sm font-semibold tracking-wide text-zinc-400">
+                                        {tag.toUpperCase()}
+                                    </span>
+                                ))}
+                            </div>
+                            <h1 className="text-5xl md:text-8xl font-black uppercase leading-[0.9] tracking-tighter mb-4 whitespace-pre-line">
+                                {selectedProject.title}
+                            </h1>
+                            <p className="text-xl text-zinc-500 font-bold">{selectedProject.category}</p>
+                        </div>
+
+                        {/* Visual */}
+                        <div className={`w-full ${selectedProject.type === 'media' ? 'h-auto' : 'h-[400px] md:h-[600px]'} border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
+                            {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
+                                <iframe
+                                    src={selectedProject.embedUrl}
+                                    title={selectedProject.title}
+                                    className="w-full h-full border-0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            ) : selectedProject.type === 'media' && selectedProject.gallery ? (
+                                <div className="flex flex-col gap-4">
+                                    {selectedProject.gallery.map((img, i) => (
+                                        <img
+                                            key={i}
+                                            src={img}
+                                            alt={`${selectedProject.title} ${i + 1}`}
+                                            className="w-full h-auto object-cover grayscale hover:grayscale-0 transition-grayscale duration-500"
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <video
+                                    src={selectedProject.videoSrc}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-grayscale duration-500"
+                                />
+                            )}
+                        </div>
+
+                        {/* Details */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 font-['Inter']">
+                            <div className="md:col-span-2">
+                                <h3 className="font-['Outfit'] text-2xl font-bold mb-4 text-[#39ff14]">PROJECT OVERVIEW</h3>
+                                <p className="text-xl md:text-2xl font-medium leading-relaxed text-zinc-300">
+                                    {selectedProject.description}
+                                </p>
+                            </div>
+                            <div>
+                                <a
+                                    href={selectedProject.link}
+                                    className="group flex items-center justify-between w-full border-2 border-white p-6 font-['Outfit'] font-black text-2xl hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300"
+                                >
+                                    <span>VISIT WEBSITE</span>
+                                    <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Footer */}
             <footer id="contact" className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black font-['Outfit']">
