@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ArrowUpRight, Menu, X, ArrowRight } from 'lucide-react';
 import Marquee from 'react-fast-marquee';
-import { PROJECTS, LAB_ITEMS, Project } from './data';
+import { PROJECTS, LAB_ITEMS, Project, LocalizedString } from './data';
 
 interface HoverVideoCardProps {
     title: string;
@@ -74,6 +74,14 @@ const Portfolio = () => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
     const [isIframeLoading, setIsIframeLoading] = useState(true);
+    const [lang, setLang] = useState<'en' | 'ko'>('en');
+
+    // Translation Helper
+    const t = (content?: LocalizedString) => {
+        if (!content) return "";
+        if (typeof content === 'string') return content;
+        return content[lang];
+    };
 
     // Reveal Animation Observer
     useEffect(() => {
@@ -106,6 +114,32 @@ const Portfolio = () => {
         }
     }, [selectedProject]);
 
+    // Mobile Back Button Support (History API)
+    useEffect(() => {
+        if (selectedProject) {
+            // Add history entry
+            window.history.pushState({ modalOpen: true }, '');
+
+            const handlePopState = () => {
+                setSelectedProject(null);
+            };
+
+            window.addEventListener('popstate', handlePopState);
+
+            return () => {
+                window.removeEventListener('popstate', handlePopState);
+            };
+        }
+    }, [selectedProject]);
+
+    const handleManualClose = () => {
+        if (window.history.state?.modalOpen) {
+            window.history.back();
+        } else {
+            setSelectedProject(null);
+        }
+    };
+
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const scrollLeft = e.currentTarget.scrollLeft;
         // Card width is 85vw.
@@ -120,21 +154,31 @@ const Portfolio = () => {
             {/* Navigation */}
             <nav className="sticky top-0 z-50 bg-white border-b-4 border-black px-6 md:px-16 h-20 flex items-center justify-between">
                 <div className="font-['Outfit'] font-black text-3xl tracking-tighter">JD.26</div>
-                <div className="hidden md:flex gap-10">
-                    {['WORKS', 'LABS', 'ABOUT', 'CONTACT'].map((link) => (
-                        <a key={link} href={`#${link.toLowerCase()}`} className="font-['Outfit'] font-extrabold text-lg hover:underline decoration-4 underline-offset-4">
-                            {link}
-                        </a>
-                    ))}
-                </div>
+                <div className="flex items-center gap-4 md:gap-8">
+                    <div className="hidden md:flex gap-10">
+                        {['WORKS', 'LABS', 'ABOUT', 'CONTACT'].map((link) => (
+                            <a key={link} href={`#${link.toLowerCase()}`} className="font-['Outfit'] font-extrabold text-lg hover:underline decoration-4 underline-offset-4">
+                                {link}
+                            </a>
+                        ))}
+                    </div>
 
-                {/* Mobile Menu Toggle Button */}
-                <button
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className="md:hidden border-2 border-black p-2 hover:bg-black hover:text-white transition-colors z-50"
-                >
-                    {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                    {/* Language Toggle */}
+                    <button
+                        onClick={() => setLang(lang === 'en' ? 'ko' : 'en')}
+                        className="border-2 border-black px-3 py-1 text-sm font-bold bg-[#ccff00] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                    >
+                        {lang === 'en' ? 'EN' : 'KR'}
+                    </button>
+
+                    {/* Mobile Menu Toggle Button */}
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="md:hidden border-2 border-black p-2 hover:bg-black hover:text-white transition-colors z-50"
+                    >
+                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
             </nav>
 
             {/* Mobile Full-Screen Menu Overlay */}
@@ -314,145 +358,147 @@ const Portfolio = () => {
             </section>
 
             {/* Project Detail Modal */}
-            {selectedProject && (
-                <div className="fixed inset-0 z-[60] bg-black text-white overflow-y-auto font-['Outfit'] animate-fadeIn">
-                    <button
-                        onClick={() => setSelectedProject(null)}
-                        className="sticky top-6 float-right right-6 z-50 p-2 bg-black border-2 border-white rounded-full hover:bg-white hover:text-black transition-colors duration-300 transform hover:scale-110"
-                    >
-                        <X size={32} />
-                    </button>
+            {
+                selectedProject && (
+                    <div className="fixed inset-0 z-[60] bg-black text-white overflow-y-auto font-['Outfit'] animate-fadeIn">
+                        <button
+                            onClick={handleManualClose}
+                            className="sticky top-6 float-right right-6 z-50 p-2 bg-black border-2 border-white rounded-full hover:bg-white hover:text-black transition-colors duration-300 transform hover:scale-110"
+                        >
+                            <X size={32} />
+                        </button>
 
-                    <div className="max-w-[1200px] mx-auto p-6 md:p-16 pt-20 md:pt-20 flex flex-col gap-12">
-                        {/* Header */}
-                        <div>
-                            <div className="flex flex-wrap gap-3 mb-6">
-                                {selectedProject.tags.map((tag, i) => (
-                                    <span key={i} className="border border-zinc-600 px-3 py-1 text-sm font-semibold tracking-wide text-zinc-400">
-                                        {tag.toUpperCase()}
-                                    </span>
-                                ))}
-                            </div>
-                            <h1 className="text-5xl md:text-8xl font-black uppercase leading-[0.9] tracking-tighter mb-4 whitespace-pre-line">
-                                {selectedProject.title}
-                            </h1>
-                            <p className="text-xl text-zinc-500 font-bold">{selectedProject.category}</p>
-                        </div>
-
-                        {/* Visual */}
-                        {/* Visual - Only render if media/iframe exists AND not hidden */}
-                        {!selectedProject.hideModalVisual && ((selectedProject.type === 'interactive' && selectedProject.embedUrl) || selectedProject.videoSrc || selectedProject.imageSrc) ? (
-                            <div className={`w-full ${selectedProject.type === 'interactive'
-                                ? 'h-[400px] md:h-[600px]'
-                                : selectedProject.visualFit === 'contain'
-                                    ? 'h-auto bg-black' // Remove aspect-video for contain
-                                    : 'h-auto aspect-video'
-                                } border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
-
-                                {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
-                                    <div className="w-full h-full relative overflow-hidden">
-                                        {isIframeLoading && (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
-                                                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                                            </div>
-                                        )}
-                                        <div className="w-[200%] h-[200%] md:w-full md:h-full origin-top-left scale-[0.6] md:scale-100">
-                                            <iframe
-                                                src={selectedProject.embedUrl}
-                                                title={selectedProject.title}
-                                                className="w-full h-full border-0"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                                onLoad={() => setIsIframeLoading(false)}
-                                            />
-                                        </div>
-                                    </div>
-                                ) : selectedProject.videoSrc ? (
-                                    <video
-                                        src={selectedProject.videoSrc}
-                                        poster={selectedProject.imageSrc}
-                                        preload="metadata"
-                                        autoPlay
-                                        loop
-                                        muted
-                                        playsInline
-                                        className={`w-full ${selectedProject.visualFit === 'contain' ? 'h-auto object-contain' : 'h-full object-cover'} grayscale group-hover:grayscale-0 transition-grayscale duration-500`}
-                                    />
-                                ) : selectedProject.imageSrc ? (
-                                    <img
-                                        src={selectedProject.imageSrc}
-                                        alt={selectedProject.title}
-                                        className={`w-full ${selectedProject.visualFit === 'contain' ? 'h-auto object-contain' : 'h-full object-cover'} grayscale group-hover:grayscale-0 transition-grayscale duration-500`}
-                                    />
-                                ) : null}
-                            </div>
-                        ) : null}
-
-                        {/* Details */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 font-['Inter']">
-                            <div className="md:col-span-2">
-                                <h3 className="font-['Outfit'] text-2xl font-bold mb-4 text-[#39ff14]">PROJECT OVERVIEW</h3>
-                                <p className="text-xl md:text-2xl font-medium leading-relaxed text-zinc-300">
-                                    {selectedProject.description}
-                                </p>
-                            </div>
+                        <div className="max-w-[1200px] mx-auto p-6 md:p-16 pt-20 md:pt-20 flex flex-col gap-12">
+                            {/* Header */}
                             <div>
-                                {selectedProject.link && selectedProject.link !== '#' && (
-                                    <a
-                                        href={selectedProject.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group flex items-center justify-between w-full border-2 border-white p-6 font-['Outfit'] font-black text-2xl hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300"
-                                    >
-                                        <span>VISIT WEBSITE</span>
-                                        <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-                                    </a>
-                                )}
+                                <div className="flex flex-wrap gap-3 mb-6">
+                                    {selectedProject.tags.map((tag, i) => (
+                                        <span key={i} className="border border-zinc-600 px-3 py-1 text-sm font-semibold tracking-wide text-zinc-400">
+                                            {tag.toUpperCase()}
+                                        </span>
+                                    ))}
+                                </div>
+                                <h1 className="text-5xl md:text-8xl font-black uppercase leading-[0.9] tracking-tighter mb-4 whitespace-pre-line">
+                                    {selectedProject.title}
+                                </h1>
+                                <p className="text-xl text-zinc-500 font-bold">{selectedProject.category}</p>
                             </div>
-                        </div>
 
-                        {/* Gallery / Rich Media Renderer (Full Width) */}
-                        {selectedProject.gallery && (
-                            <div className="mt-16 flex flex-col gap-8 w-full">
-                                {selectedProject.gallery.map((block, i) => (
-                                    <div key={i} className="w-full">
-                                        {block.type === 'text' && block.content && (
-                                            <div className="text-gray-400 text-sm mt-12 mb-4 font-mono uppercase tracking-widest border-l-2 border-gray-700 pl-4 whitespace-pre-line">
-                                                {block.content}
+                            {/* Visual */}
+                            {/* Visual - Only render if media/iframe exists AND not hidden */}
+                            {!selectedProject.hideModalVisual && ((selectedProject.type === 'interactive' && selectedProject.embedUrl) || selectedProject.videoSrc || selectedProject.imageSrc) ? (
+                                <div className={`w-full ${selectedProject.type === 'interactive'
+                                    ? 'h-[400px] md:h-[600px]'
+                                    : selectedProject.visualFit === 'contain'
+                                        ? 'h-auto bg-black' // Remove aspect-video for contain
+                                        : 'h-auto aspect-video'
+                                    } border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
+
+                                    {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
+                                        <div className="w-full h-full relative overflow-hidden">
+                                            {isIframeLoading && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
+                                                    <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                </div>
+                                            )}
+                                            <div className="w-[200%] h-[200%] md:w-full md:h-full origin-top-left scale-[0.6] md:scale-100">
+                                                <iframe
+                                                    src={selectedProject.embedUrl}
+                                                    title={selectedProject.title}
+                                                    className="w-full h-full border-0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                    onLoad={() => setIsIframeLoading(false)}
+                                                />
                                             </div>
-                                        )}
-                                        {block.type === 'image' && block.src && (
-                                            <img
-                                                src={block.src}
-                                                alt={`${selectedProject.title} detail ${i}`}
-                                                className="w-full h-auto rounded-sm mb-2 border border-gray-800"
-                                            />
-                                        )}
-                                        {block.type === 'video' && block.src && (
-                                            <video
-                                                src={block.src}
-                                                preload="metadata"
-                                                autoPlay loop muted playsInline
-                                                className="w-full h-auto rounded-sm mb-2 border border-gray-800"
-                                            />
-                                        )}
-                                        {block.type === 'code' && block.content && (
-                                            <div className="bg-[#1e1e1e] border border-gray-700 rounded-md p-4 overflow-x-auto my-4 text-left">
-                                                {block.language && (
-                                                    <div className="text-xs font-mono text-gray-500 mb-2 uppercase tracking-wider">{block.language}</div>
-                                                )}
-                                                <pre className="font-mono text-sm leading-relaxed text-[#d4d4d4] whitespace-pre-wrap break-all">
-                                                    <code>{block.content}</code>
-                                                </pre>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                        </div>
+                                    ) : selectedProject.videoSrc ? (
+                                        <video
+                                            src={selectedProject.videoSrc}
+                                            poster={selectedProject.imageSrc}
+                                            preload="metadata"
+                                            autoPlay
+                                            loop
+                                            muted
+                                            playsInline
+                                            className={`w-full ${selectedProject.visualFit === 'contain' ? 'h-auto object-contain' : 'h-full object-cover'} grayscale group-hover:grayscale-0 transition-grayscale duration-500`}
+                                        />
+                                    ) : selectedProject.imageSrc ? (
+                                        <img
+                                            src={selectedProject.imageSrc}
+                                            alt={selectedProject.title}
+                                            className={`w-full ${selectedProject.visualFit === 'contain' ? 'h-auto object-contain' : 'h-full object-cover'} grayscale group-hover:grayscale-0 transition-grayscale duration-500`}
+                                        />
+                                    ) : null}
+                                </div>
+                            ) : null}
+
+                            {/* Details */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 font-['Inter']">
+                                <div className="md:col-span-2">
+                                    <h3 className="font-['Outfit'] text-2xl font-bold mb-4 text-[#39ff14]">PROJECT OVERVIEW</h3>
+                                    <p className="text-xl md:text-2xl font-medium leading-relaxed text-zinc-300">
+                                        {t(selectedProject.description)}
+                                    </p>
+                                </div>
+                                <div>
+                                    {selectedProject.link && selectedProject.link !== '#' && (
+                                        <a
+                                            href={selectedProject.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="group flex items-center justify-between w-full border-2 border-white p-6 font-['Outfit'] font-black text-2xl hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300"
+                                        >
+                                            <span>VISIT WEBSITE</span>
+                                            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                        </a>
+                                    )}
+                                </div>
                             </div>
-                        )}
+
+                            {/* Gallery / Rich Media Renderer (Full Width) */}
+                            {selectedProject.gallery && (
+                                <div className="mt-16 flex flex-col gap-8 w-full">
+                                    {selectedProject.gallery.map((block, i) => (
+                                        <div key={i} className="w-full">
+                                            {block.type === 'text' && block.content && (
+                                                <div className="text-gray-400 text-sm mt-12 mb-4 font-mono uppercase tracking-widest border-l-2 border-gray-700 pl-4 whitespace-pre-line">
+                                                    {t(block.content)}
+                                                </div>
+                                            )}
+                                            {block.type === 'image' && block.src && (
+                                                <img
+                                                    src={block.src}
+                                                    alt={`${selectedProject.title} detail ${i}`}
+                                                    className="w-full h-auto rounded-sm mb-2 border border-gray-800"
+                                                />
+                                            )}
+                                            {block.type === 'video' && block.src && (
+                                                <video
+                                                    src={block.src}
+                                                    preload="metadata"
+                                                    autoPlay loop muted playsInline
+                                                    className="w-full h-auto rounded-sm mb-2 border border-gray-800"
+                                                />
+                                            )}
+                                            {block.type === 'code' && block.content && (
+                                                <div className="bg-[#1e1e1e] border border-gray-700 rounded-md p-4 overflow-x-auto my-4 text-left">
+                                                    {block.language && (
+                                                        <div className="text-xs font-mono text-gray-500 mb-2 uppercase tracking-wider">{block.language}</div>
+                                                    )}
+                                                    <pre className="font-mono text-sm leading-relaxed text-[#d4d4d4] whitespace-pre-wrap break-all">
+                                                        <code>{t(block.content)}</code>
+                                                    </pre>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Footer */}
             <footer id="contact" className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black font-['Outfit']">

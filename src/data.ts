@@ -1,3 +1,5 @@
+export type LocalizedString = string | { en: string; ko: string };
+
 export interface Project {
     id: number;
     title: string;
@@ -7,7 +9,7 @@ export interface Project {
     className: string;
     videoHeight?: string;
     isFeatured?: boolean; // For the first card with distinctive layout
-    description: string;
+    description: LocalizedString;
     link: string;
     tags: string[];
     type?: 'interactive' | 'video' | 'image' | 'media';
@@ -22,7 +24,7 @@ export interface Project {
 export interface GalleryBlock {
     type: 'image' | 'video' | 'text' | 'code';
     src?: string;      // For image/video
-    content?: string;  // For text/code
+    content?: LocalizedString;  // For text/code
     language?: string; // For code
 }
 
@@ -46,38 +48,56 @@ export const PROJECTS: Project[] = [
         poster: "/box_poster.jpg",
         className: "md:col-span-2 border-4 border-black p-6 flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-300 bg-white group cursor-pointer relative overflow-hidden",
         isFeatured: true,
-        description: "An elegant packaging design for a premium hibiscus tea brand. The goal was to capture the organic and vibrant nature of the flower through texture and lighting.",
+        description: {
+            en: "An elegant packaging design for a premium hibiscus tea brand. The goal was to capture the organic and vibrant nature of the flower through texture and lighting.",
+            ko: "프리미엄 히비스커스 티 브랜드를 위한 우아한 패키지 디자인입니다. 텍스처와 조명을 통해 꽃의 유기적이고 생동감 넘치는 본연의 성질을 포착하고자 했습니다."
+        },
         link: "#",
         tags: ["Blender", "KeyShot", "Packaging Design", "3D Rendering"],
         type: "media",
         gallery: [
             {
                 type: 'text',
-                content: "01. STRUCTURE DESIGN\nFirst, I designed the base geometry using Blender to ensure structural integrity."
+                content: {
+                    en: "01. STRUCTURE DESIGN\nFirst, I designed the base geometry using Blender to ensure structural integrity.",
+                    ko: "01. 구조 설계\n먼저 블렌더(Blender)를 사용하여 구조적 안정성을 보장하도록 기본 지오메트리를 설계했습니다."
+                }
             },
             { type: 'image', src: "/model.webp" },
 
             {
                 type: 'text',
-                content: "02. MATERIAL & LIGHTING PROCESS\nUsing KeyShot, I experimented with various material nodes and lighting setups to achieve a realistic texture."
+                content: {
+                    en: "02. MATERIAL & LIGHTING PROCESS\nUsing KeyShot, I experimented with various material nodes and lighting setups to achieve a realistic texture.",
+                    ko: "02. 재질 및 조명 프로세스\n키샷(KeyShot)을 활용하여 다양한 재질 노드와 조명 설정을 실험하며 사실적인 텍스처를 구현했습니다."
+                }
             },
             { type: 'video', src: "/process.mp4" },
 
             {
                 type: 'text',
-                content: "03. VISUALIZATION\nThe final rendering focuses on the clean, minimal aesthetic of the brand."
+                content: {
+                    en: "03. VISUALIZATION\nThe final rendering focuses on the clean, minimal aesthetic of the brand.",
+                    ko: "03. 시각화\n최종 렌더링은 브랜드의 깔끔하고 미니멀한 미적 감각에 초점을 맞췄습니다."
+                }
             },
             { type: 'image', src: "/package.webp" },
 
             {
                 type: 'text',
-                content: "04. PRODUCTION READY\nI also created the precise die-line (blueprint) for actual mass production."
+                content: {
+                    en: "04. PRODUCTION READY\nI also created the precise die-line (blueprint) for actual mass production.",
+                    ko: "04. 제작 준비 완료\n실제 대량 생산을 위한 정밀한 다이라인(설계도)도 제작했습니다."
+                }
             },
             { type: 'image', src: "/dieline.webp" },
 
             {
                 type: 'text',
-                content: "05. CONTEXT\nA lifestyle mockup showing how the product looks in a real-world environment."
+                content: {
+                    en: "05. CONTEXT\nA lifestyle mockup showing how the product looks in a real-world environment.",
+                    ko: "05. 컨텍스트\n실제 환경에서 제품이 어떻게 보이는지 보여주는 라이프스타일 목업입니다."
+                }
             },
             { type: 'image', src: "/lifestyle.webp" }
         ]
@@ -89,7 +109,10 @@ export const PROJECTS: Project[] = [
         videoSrc: "/dashboard.mp4",
         poster: "/dashboard_poster.jpg",
         className: "md:col-span-1 bg-black text-white hover:shadow-[8px_8px_0px_0px_rgba(113,113,122,1)]",
-        description: "A real-world chocolate ordering dashboard designed for high efficiency. Experience the seamless workflow and real-time data visualization directly inside this interactive modal.",
+        description: {
+            en: "A real-world chocolate ordering dashboard designed for high efficiency. Experience the seamless workflow and real-time data visualization directly inside this interactive modal.",
+            ko: "높은 효율성을 위해 설계된 실전 초콜릿 주문 대시보드입니다. 이 인터랙티브 모달 안에서 끊김 없는 워크플로우와 실시간 데이터 시각화를 직접 경험해보세요."
+        },
         link: "https://order.verygood-chocolate.com/",
         tags: ["React", "Tailwind CSS", "Recharts", "Framer Motion"],
         type: "interactive",
@@ -103,14 +126,20 @@ export const PROJECTS: Project[] = [
         poster: "/algo_poster.jpg",
         hideModalVisual: true,
         className: "md:col-span-1 bg-gray-200 text-black hover:bg-[#edc5c4] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
-        description: "A high-performance diagnostic tool for Naver Blog SEO. It automates data collection of visitor metrics, content quality, and real-time search engine rankings using Selenium and Streamlit.",
+        description: {
+            en: "A high-performance diagnostic tool for Naver Blog SEO. It automates data collection of visitor metrics, content quality, and real-time search engine rankings using Selenium and Streamlit.",
+            ko: "네이버 블로그 SEO를 위한 고성능 진단 도구입니다. 셀레니움(Selenium)과 스트림릿(Streamlit)을 사용하여 방문자 지표, 콘텐츠 품질, 실시간 검색 엔진 순위 데이터 수집을 자동화합니다."
+        },
         link: "https://blogcheck.streamlit.app/",
         tags: ["D3.js", "Python", "Data Structure", "SVG"],
         type: "media",
         gallery: [
             {
                 type: 'text',
-                content: "01. HYBRID TERMINAL INTERFACE\nDesigned a custom CSS-in-Streamlit terminal UI to provide a hacker-style UX while maintaining professional data visualization."
+                content: {
+                    en: "01. HYBRID TERMINAL INTERFACE\nDesigned a custom CSS-in-Streamlit terminal UI to provide a hacker-style UX while maintaining professional data visualization.",
+                    ko: "01. 하이브리드 터미널 인터페이스\n해커 스타일의 사용자 경험(UX)을 제공하면서도 전문적인 데이터 시각화를 유지하기 위해 커스텀 CSS-in-Streamlit 터미널 UI를 설계했습니다."
+                }
             },
             {
                 type: 'video',
@@ -118,7 +147,10 @@ export const PROJECTS: Project[] = [
             },
             {
                 type: 'text',
-                content: "02. REAL-TIME SEARCH EXPOSURE LOGIC\nThe core engine tracks keyword rankings by reverse-engineering mobile search results and calculating competitive scores."
+                content: {
+                    en: "02. REAL-TIME SEARCH EXPOSURE LOGIC\nThe core engine tracks keyword rankings by reverse-engineering mobile search results and calculating competitive scores.",
+                    ko: "02. 실시간 검색 노출 로직\n핵심 엔진은 모바일 검색 결과를 리버스 엔지니어링하고 경쟁 점수를 계산하여 키워드 순위를 추적합니다."
+                }
             },
             {
                 type: 'code',
@@ -147,14 +179,20 @@ export const PROJECTS: Project[] = [
         poster: "/cyber_poster.jpg",
         className: "md:col-span-2 bg-gray-200 text-black hover:bg-[#FFC497] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
         videoHeight: "h-[200px]",
-        description: "A customized content production ecosystem. It integrates Gemini MCP for AI-driven ideation and a Firebase backend for seamless asset management and publishing.",
+        description: {
+            en: "A customized content production ecosystem. It integrates Gemini MCP for AI-driven ideation and a Firebase backend for seamless asset management and publishing.",
+            ko: "개인 맞춤형 콘텐츠 제작 생태계입니다. AI 기반 아이디어 도출을 위한 Gemini MCP와 원활한 자산 관리 및 발행을 위한 Firebase 백엔드를 통합했습니다."
+        },
         link: "https://verygood-chocolate.com",
         tags: ["Firebase", "Gemini MCP", "Pencil.dev", "TypeScript"],
         type: "media",
         gallery: [
             {
                 type: 'text',
-                content: "01. AI-DRIVEN IDEATION\nCollaborating with Gemini MCP via Pencil.dev to rapidly prototype and refine content details with high precision."
+                content: {
+                    en: "01. AI-DRIVEN IDEATION\nCollaborating with Gemini MCP via Pencil.dev to rapidly prototype and refine content details with high precision.",
+                    ko: "01. AI 기반 아이디어 도출\nPencil.dev를 통해 Gemini MCP와 협업하여 높은 정밀도로 콘텐츠 세부 사항을 빠르게 프로토타이핑하고 다듬습니다."
+                }
             },
             { type: 'image', src: "/system_ideation.webp" },
 
