@@ -16,6 +16,7 @@ export interface Project {
     gallery?: GalleryBlock[];
     hideModalVisual?: boolean;
     visualFit?: 'cover' | 'contain';
+    poster?: string;
 }
 
 export interface GalleryBlock {
@@ -42,6 +43,7 @@ export const PROJECTS: Project[] = [
         title: "VERY GOOD  PACKAGING",
         category: "BLENDER / KEYSHOT",
         videoSrc: "/box.mp4",
+        poster: "/box_poster.jpg",
         className: "md:col-span-2 border-4 border-black p-6 flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-300 bg-white group cursor-pointer relative overflow-hidden",
         isFeatured: true,
         description: "An elegant packaging design for a premium hibiscus tea brand. The goal was to capture the organic and vibrant nature of the flower through texture and lighting.",
@@ -85,6 +87,7 @@ export const PROJECTS: Project[] = [
         title: "CHOCOLATE ORDER SYSTEM",
         category: "REACT / TAILWIND",
         videoSrc: "/dashboard.mp4",
+        poster: "/dashboard_poster.jpg",
         className: "md:col-span-1 bg-black text-white hover:shadow-[8px_8px_0px_0px_rgba(113,113,122,1)]",
         description: "A real-world chocolate ordering dashboard designed for high efficiency. Experience the seamless workflow and real-time data visualization directly inside this interactive modal.",
         link: "https://order.verygood-chocolate.com/",
@@ -97,6 +100,7 @@ export const PROJECTS: Project[] = [
         title: "BLOG DETECTOR",
         category: "PYTHON / SELENIUM / STREAMLIT",
         videoSrc: "/algo.mp4",
+        poster: "/algo_poster.jpg",
         hideModalVisual: true,
         className: "md:col-span-1 bg-gray-200 text-black hover:bg-[#edc5c4] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
         description: "A high-performance diagnostic tool for Naver Blog SEO. It automates data collection of visitor metrics, content quality, and real-time search engine rankings using Selenium and Streamlit.",
@@ -139,6 +143,8 @@ export const PROJECTS: Project[] = [
         title: "CONTENT AUTOMATION\nSYSTEM",
         category: "FIREBASE / GEMINI MCP / PENCIL.DEV",
         imageSrc: "/system_ideation.webp",
+        videoSrc: "/cyber.mp4",
+        poster: "/cyber_poster.jpg",
         className: "md:col-span-2 bg-gray-200 text-black hover:bg-[#FFC497] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
         videoHeight: "h-[200px]",
         description: "A customized content production ecosystem. It integrates Gemini MCP for AI-driven ideation and a Firebase backend for seamless asset management and publishing.",

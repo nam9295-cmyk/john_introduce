@@ -22,3 +22,10 @@ html {
     background: #edc5c4;
     /* 잡으면 핑크색으로 변신! */
 }
+
+html,
+body {
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+}

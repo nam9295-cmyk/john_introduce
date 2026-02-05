@@ -73,13 +73,16 @@ const Portfolio = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isIframeLoading, setIsIframeLoading] = useState(true);
 
     // Lock body scroll when modal is open
     useEffect(() => {
         if (selectedProject) {
             document.body.style.overflow = 'hidden';
+            setIsIframeLoading(true); // Reset loader on open
         } else {
             document.body.style.overflow = 'unset';
+            setIsIframeLoading(true); // Reset loader on close too just in case
         }
     }, [selectedProject]);
 
@@ -152,6 +155,8 @@ const Portfolio = () => {
                                     <div className="w-full h-[200px] bg-gray-100 border-2 border-black mb-4 relative overflow-hidden group">
                                         <video
                                             src={project.videoSrc}
+                                            poster={project.poster || project.imageSrc}
+                                            preload="metadata"
                                             autoPlay
                                             loop
                                             muted
@@ -161,8 +166,8 @@ const Portfolio = () => {
                                         <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
                                     </div>
                                 </div>
-                                <div className="relative z-10 flex justify-between items-end">
-                                    <h2 className="font-['Outfit'] font-black text-4xl md:text-5xl leading-[0.9] whitespace-pre-line">
+                                <div className="relative z-10 flex flex-col md:flex-row md:justify-between md:items-end gap-2 md:gap-0 pt-10 md:pt-0">
+                                    <h2 className="font-['Outfit'] font-black text-[11vw] md:text-5xl leading-[1.1] md:leading-[0.9] whitespace-pre-line">
                                         {project.title}
                                     </h2>
                                     <span className="font-['Inter'] font-semibold text-zinc-500 text-sm tracking-wide">{project.category}</span>
@@ -189,7 +194,7 @@ const Portfolio = () => {
                 <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                     {/* Left: Headline */}
                     <div>
-                        <h2 className="font-['Outfit'] font-black text-6xl md:text-8xl leading-[0.9] tracking-tighter">
+                        <h2 className="font-['Outfit'] font-black text-6xl md:text-8xl leading-none md:leading-[0.9] tracking-tighter">
                             BRIDGING<br />DESIGN &<br />TECHNOLOGY
                         </h2>
                     </div>
@@ -323,17 +328,30 @@ const Portfolio = () => {
                                     ? 'h-auto bg-black' // Remove aspect-video for contain
                                     : 'h-auto aspect-video'
                                 } border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
+
                                 {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
-                                    <iframe
-                                        src={selectedProject.embedUrl}
-                                        title={selectedProject.title}
-                                        className="w-full h-full border-0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                    />
+                                    <div className="w-full h-full relative overflow-hidden">
+                                        {isIframeLoading && (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
+                                                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
+                                        <div className="w-[200%] h-[200%] md:w-full md:h-full origin-top-left scale-[0.6] md:scale-100">
+                                            <iframe
+                                                src={selectedProject.embedUrl}
+                                                title={selectedProject.title}
+                                                className="w-full h-full border-0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                onLoad={() => setIsIframeLoading(false)}
+                                            />
+                                        </div>
+                                    </div>
                                 ) : selectedProject.videoSrc ? (
                                     <video
                                         src={selectedProject.videoSrc}
+                                        poster={selectedProject.imageSrc}
+                                        preload="metadata"
                                         autoPlay
                                         loop
                                         muted
@@ -393,6 +411,7 @@ const Portfolio = () => {
                                         {block.type === 'video' && block.src && (
                                             <video
                                                 src={block.src}
+                                                preload="metadata"
                                                 autoPlay loop muted playsInline
                                                 className="w-full h-auto rounded-sm mb-2 border border-gray-800"
                                             />
