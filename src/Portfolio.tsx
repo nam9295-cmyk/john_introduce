@@ -72,6 +72,7 @@ const Portfolio = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     // Lock body scroll when modal is open
     useEffect(() => {
@@ -197,7 +198,7 @@ const Portfolio = () => {
                     <div>
                         <h3 className="font-['Outfit'] font-bold text-2xl mb-8 tracking-widest text-zinc-500">THE ARSENAL</h3>
                         <div className="flex flex-wrap gap-3">
-                            {['Photoshop', 'Illustrator', 'After Effects', 'Premiere Pro', 'Blender', 'SketchUp', 'KeyShot 11', 'React', 'Tailwind', 'Antigravity'].map((tool) => (
+                            {['Photoshop', 'Illustrator', 'After Effects', 'Premiere Pro', 'Blender', 'SketchUp', 'KeyShot 11', 'React', 'Tailwind', 'Antigravity', 'vibe coding'].map((tool) => (
                                 <span key={tool} className="border-2 border-white px-4 py-2 font-['Outfit'] font-bold text-lg tracking-wide hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300 cursor-default">
                                     {tool}
                                 </span>
@@ -225,18 +226,55 @@ const Portfolio = () => {
                         onScroll={handleScroll}
                         className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 md:block md:columns-3 md:gap-8 md:space-y-8 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden"
                     >
-                        {LAB_ITEMS.map((item) => (
-                            <div key={item.id} className="min-w-[85vw] snap-center md:min-w-0 md:break-inside-avoid md:snap-align-none bg-white border-4 border-black p-4 hover:-translate-y-2 hover:rotate-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 cursor-pointer">
-                                <div className={`bg-zinc-200 w-full ${item.height} mb-4 border-2 border-black relative overflow-hidden group`}>
-                                    <div className={`absolute inset-0 ${item.bgColor}`}></div>
-                                </div>
-                                <div className="flex justify-between items-end font-['Outfit']">
-                                    <span className="font-bold text-xl">{item.title}</span>
-                                    <span className="font-bold text-sm text-zinc-500">{item.date}</span>
-                                </div>
-                            </div>
-                        ))}
+                        {(isExpanded ? LAB_ITEMS : LAB_ITEMS.slice(0, 6)).map((item, index, array) => {
+                            const showDivider = isExpanded && (index === 0 || item.year !== array[index - 1].year);
+                            const getCategoryColor = (cat = "") => {
+                                const c = cat.toLowerCase();
+                                if (c.includes('ai')) return 'text-yellow-400';
+                                if (c.includes('3d')) return 'text-pink-400';
+                                if (c.includes('package')) return 'text-cyan-400';
+                                if (c.includes('graphic')) return 'text-orange-400';
+                                if (c.includes('web')) return 'text-lime-400';
+                                return 'text-white';
+                            };
+
+                            return (
+                                <React.Fragment key={item.id}>
+                                    {showDivider && (
+                                        <div className="hidden md:block w-full [column-span:all] col-span-full py-12 border-b-4 border-black mb-8">
+                                            <h3 className="text-6xl font-black italic tracking-tighter text-gray-200">
+                                                YEAR_{item.year || '202X'}
+                                            </h3>
+                                        </div>
+                                    )}
+                                    <div className="min-w-[85vw] snap-center md:min-w-0 md:break-inside-avoid md:snap-align-none bg-white border-4 border-black p-4 hover:scale-[1.02] hover:shadow-[8px_8px_0px_0px_rgba(0,255,127,1)] transition-all duration-500 cursor-pointer grayscale-[0.5] contrast-[1.1] opacity-90 hover:grayscale-0 hover:opacity-100 group">
+                                        <div className={`bg-zinc-200 w-full ${item.height} mb-4 border-2 border-black relative overflow-hidden`}>
+                                            <div className={`absolute top-2 left-2 px-2 py-0.5 text-[9px] font-bold bg-black rounded-sm uppercase z-10 ${getCategoryColor(item.category)}`}>
+                                                {item.category || 'LAB'}
+                                            </div>
+                                            {item.imageUrl ? (
+                                                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover grayscale-[0.5] contrast-[1.1] opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" />
+                                            ) : (
+                                                <div className={`absolute inset-0 ${item.bgColor}`}></div>
+                                            )}
+                                        </div>
+                                        <div className="flex justify-between items-end font-['Outfit']">
+                                            <span className="font-bold text-xl">{item.title}</span>
+                                            <span className="font-bold text-sm text-zinc-500">{item.date}</span>
+                                        </div>
+                                    </div>
+                                </React.Fragment>
+                            );
+                        })}
                     </div>
+
+                    {/* View All Button */}
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="w-full py-8 border-4 border-black font-black text-2xl hover:bg-[#ccff00] hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all mb-20 mt-12 bg-white"
+                    >
+                        {isExpanded ? "CLOSE ARCHIVE" : `EXPLORE FULL ARCHIVE (${LAB_ITEMS.length}+)`}
+                    </button>
 
                     {/* Pagination Dots (Mobile Only) */}
                     <div className="flex justify-center gap-2 mt-4 md:hidden">
@@ -280,10 +318,10 @@ const Portfolio = () => {
                         {/* Visual - Only render if media/iframe exists AND not hidden */}
                         {!selectedProject.hideModalVisual && ((selectedProject.type === 'interactive' && selectedProject.embedUrl) || selectedProject.videoSrc || selectedProject.imageSrc) ? (
                             <div className={`w-full ${selectedProject.type === 'interactive'
-                                    ? 'h-[400px] md:h-[600px]'
-                                    : selectedProject.visualFit === 'contain'
-                                        ? 'h-auto bg-black' // Remove aspect-video for contain
-                                        : 'h-auto aspect-video'
+                                ? 'h-[400px] md:h-[600px]'
+                                : selectedProject.visualFit === 'contain'
+                                    ? 'h-auto bg-black' // Remove aspect-video for contain
+                                    : 'h-auto aspect-video'
                                 } border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
                                 {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
                                     <iframe

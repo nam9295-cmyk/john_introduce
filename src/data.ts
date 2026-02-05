@@ -25,6 +25,17 @@ export interface GalleryBlock {
     language?: string; // For code
 }
 
+export interface LabItem {
+    id: number;
+    title: string;
+    date: string;
+    height: string;
+    bgColor: string;
+    imageUrl?: string;
+    category?: string;
+    year?: string;
+}
+
 export const PROJECTS: Project[] = [
     {
         id: 1,
@@ -168,55 +179,42 @@ const blogPost = {
     }
 ];
 
-export interface LabItem {
-    id: number;
-    title: string;
-    date: string;
-    height: string;
-    bgColor: string;
-}
-
+// TODO: Replace with Firebase Fetch
 export const LAB_ITEMS: LabItem[] = [
-    {
-        id: 1,
-        title: "Shader Test #01",
-        date: "FEB 05, 2026",
-        height: "h-[300px]",
-        bgColor: "bg-gray-300"
-    },
-    {
-        id: 2,
-        title: "React Flow Node",
-        date: "FEB 04, 2026",
-        height: "h-[450px]",
-        bgColor: "bg-gray-400"
-    },
-    {
-        id: 3,
-        title: "Neon Typography",
-        date: "FEB 03, 2026",
-        height: "h-[250px]",
-        bgColor: "bg-gray-500"
-    },
-    {
-        id: 4,
-        title: "Three.js Cube",
-        date: "FEB 02, 2026",
-        height: "h-[350px]",
-        bgColor: "bg-gray-600"
-    },
-    {
-        id: 5,
-        title: "Glitch Effect",
-        date: "FEB 01, 2026",
-        height: "h-[400px]",
-        bgColor: "bg-gray-700"
-    },
-    {
-        id: 6,
-        title: "UI Component",
-        date: "JAN 30, 2026",
-        height: "h-[300px]",
-        bgColor: "bg-gray-800"
-    }
+    // 2026
+    { id: 23, title: "LEVAIN COOKIE CONCEPT", date: "NOV 2026", category: "Food Design", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770278603/levain.webp", height: "h-[410px]", bgColor: "bg-neutral-900", year: "2026" },
+    { id: 22, title: "CHOCOLATE 6-BOX MOCKUP", date: "OCT 2026", category: "Package", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770278570/chocolate_6box.webp", height: "h-[300px]", bgColor: "bg-zinc-800", year: "2026" },
+    { id: 21, title: "DETOX TEA PANTONE", date: "SEP 2026", category: "Design", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770278534/detox_4tea_2.webp", height: "h-[340px]", bgColor: "bg-gray-800", year: "2026" },
+    { id: 20, title: "2025 CSAT MOCKUP", date: "AUG 2026", category: "Mockup", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770278504/suneong_poster.webp", height: "h-[430px]", bgColor: "bg-slate-800", year: "2026" },
+    { id: 19, title: "DETOX WATER AI", date: "JUL 2026", category: "AI Art", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770278452/cacaodetoxwater.webp", height: "h-[390px]", bgColor: "bg-stone-900", year: "2026" },
+    { id: 18, title: "CACAO ILLUSTRATION", date: "JUN 2026", category: "Illustration", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770278421/toss_background.webp", height: "h-[270px]", bgColor: "bg-neutral-800", year: "2026" },
+    { id: 17, title: "SIGNATURE DRINK AI", date: "MAY 2026", category: "AI Art", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277976/signature_drink.webp", height: "h-[460px]", bgColor: "bg-zinc-900", year: "2026" },
+
+    // 2025
+    { id: 16, title: "ALMOND BRANDING AI", date: "APR 2025", category: "AI Art", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277952/almond_bre.webp", height: "h-[370px]", bgColor: "bg-gray-900", year: "2025" },
+    { id: 15, title: "ALMOND AI CONCEPT", date: "MAR 2025", category: "AI Art", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277924/almond.webp", height: "h-[330px]", bgColor: "bg-slate-900", year: "2025" },
+    { id: 14, title: "TONI PACKAGING DESIGN", date: "FEB 2025", category: "Package", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277896/toni_.webp", height: "h-[410px]", bgColor: "bg-stone-800", year: "2025" },
+    { id: 13, title: "BRITISH MOCKUP SERIES", date: "JAN 2025", category: "3D", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277868/british_2025.webp", height: "h-[290px]", bgColor: "bg-neutral-900", year: "2025" },
+    { id: 10, title: "VERY GOOD POSTER", date: "OCT 2025", category: "Poster", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277765/poster_2025_2.webp", height: "h-[380px]", bgColor: "bg-slate-800", year: "2025" },
+
+    // 2024
+    { id: 11, title: "VERY GOOD PROMO BANNER", date: "NOV 2024", category: "Graphic", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277800/banner_2025.webp", height: "h-[310px]", bgColor: "bg-gray-800", year: "2024" },
+
+    // 2023
+    { id: 12, title: "HANDMADE WOODWORK", date: "DEC 2023", category: "Craft", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277830/fit_wood.webp", height: "h-[440px]", bgColor: "bg-zinc-800", year: "2023" },
+    { id: 9, title: "NOCKPET PRODUCT PAGE", date: "SEP 2023", category: "Web", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277320/nock_2023_3.png", height: "h-[480px]", bgColor: "bg-stone-900", year: "2023" },
+    { id: 8, title: "NOCKPET MOCKUP STUDY", date: "AUG 2023", category: "3D", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277265/nock_2023_2.webp", height: "h-[260px]", bgColor: "bg-neutral-800", year: "2023" },
+    { id: 7, title: "NOCKPET PACKAGING V1", date: "JUL 2023", category: "Package", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277235/nock_2023_1.webp", height: "h-[420px]", bgColor: "bg-zinc-900", year: "2023" },
+
+    // 2022
+    { id: 4, title: "ZEROCARE PROPOSAL", date: "APR 2022", category: "Editorial", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277066/zerocare_2022_2.webp", height: "h-[400px]", bgColor: "bg-stone-800", year: "2022" },
+    { id: 3, title: "ZEROCARE PACKAGING", date: "MAR 2022", category: "Package", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277022/zerocare_2022.webp", height: "h-[280px]", bgColor: "bg-neutral-900", year: "2022" },
+
+    // 2021
+    { id: 6, title: "FIRST KEYSHOT RENDER", date: "JUN 2021", category: "3D", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277170/3d_coffee_2021.webp", height: "h-[300px]", bgColor: "bg-gray-900", year: "2021" },
+    { id: 5, title: "DYWOOD LANDING PAGE", date: "MAY 2021", category: "Web", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770277106/dywood_2021.webp", height: "h-[350px]", bgColor: "bg-slate-900", year: "2021" },
+    { id: 2, title: "SIGNALCARE LEAFLET", date: "FEB 2021", category: "Graphic", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770275973/signalcare_2021.webp", height: "h-[450px]", bgColor: "bg-zinc-800", year: "2021" },
+
+    // 2020
+    { id: 1, title: "CAD SYSTEM ARCHITECTURE", date: "JAN 2020", category: "CAD", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770275927/RYAN.webp", height: "h-[320px]", bgColor: "bg-gray-800", year: "2020" }
 ];
