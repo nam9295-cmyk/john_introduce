@@ -71,11 +71,11 @@ export const PROJECTS: Project[] = [
     },
     {
         id: 2,
-        title: "CHOCOLATE-ORDER SYSTEM",
+        title: "CHOCOLATE ORDER SYSTEM",
         category: "REACT / TAILWIND",
         videoSrc: "/dashboard.mp4",
         className: "md:col-span-1 bg-black text-white hover:shadow-[8px_8px_0px_0px_rgba(113,113,122,1)]",
-        description: "실제 운영 중인 초콜릿 주문 시스템입니다. 모달 안에서 바로 체험해보세요!",
+        description: "A real-world chocolate ordering dashboard designed for high efficiency. Experience the seamless workflow and real-time data visualization directly inside this interactive modal.",
         link: "https://order.verygood-chocolate.com/",
         tags: ["React", "Tailwind CSS", "Recharts", "Framer Motion"],
         type: "interactive",
@@ -131,7 +131,7 @@ export const PROJECTS: Project[] = [
         className: "md:col-span-2 bg-gray-200 text-black hover:bg-[#FFC497] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
         videoHeight: "h-[200px]",
         description: "A customized content production ecosystem. It integrates Gemini MCP for AI-driven ideation and a Firebase backend for seamless asset management and publishing.",
-        link: "https://portfolio-2026.pages.dev/admin",
+        link: "https://verygood-chocolate.com",
         tags: ["Firebase", "Gemini MCP", "Pencil.dev", "TypeScript"],
         type: "media",
         gallery: [
