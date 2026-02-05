@@ -30,6 +30,12 @@ body {
     width: 100%;
 }
 
+/* Skip rendering offscreen sections until needed */
+.cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1000px;
+}
+
 @keyframes fadeUp {
     from {
         opacity: 0;

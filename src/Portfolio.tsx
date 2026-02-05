@@ -5,22 +5,52 @@ import { PROJECTS, LAB_ITEMS, ABOUT_DATA, Project, LocalizedString } from './dat
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqedzblr";
 
+const useInView = (options?: IntersectionObserverInit) => {
+    const ref = useRef<HTMLElement | null>(null);
+    const [inView, setInView] = useState(false);
+    const optionsRef = useRef<IntersectionObserverInit | undefined>(options);
+
+    useEffect(() => {
+        optionsRef.current = options;
+    }, [options]);
+
+    useEffect(() => {
+        if (!ref.current || inView) return;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setInView(true);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, optionsRef.current);
+
+        observer.observe(ref.current);
+        return () => observer.disconnect();
+    }, [inView]);
+
+    return { ref, inView };
+};
+
 interface HoverVideoCardProps {
     title: string;
     category: string;
     videoSrc?: string;
     imageSrc?: string;
+    poster?: string;
     className?: string;
     videoHeight?: string;
     onClick?: () => void;
 }
 
-const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoSrc, imageSrc, className, videoHeight, onClick }) => {
+const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoSrc, imageSrc, poster, className, videoHeight, onClick }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const { ref: cardRef, inView } = useInView({ rootMargin: '200px' });
+    const shouldLoad = inView;
 
     const handleMouseEnter = () => {
         if (videoRef.current) {
-            videoRef.current.play();
+            videoRef.current.play().catch(() => {});
         }
     };
 
@@ -37,6 +67,7 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoS
 
     return (
         <div
+            ref={cardRef}
             className={`${baseClasses} ${themeClasses}`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -50,15 +81,17 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoS
                 {videoSrc ? (
                     <video
                         ref={videoRef}
-                        src={videoSrc}
+                        src={shouldLoad ? videoSrc : undefined}
+                        poster={poster || imageSrc}
                         muted
                         loop
                         playsInline
-                        preload="metadata"
+                        preload={shouldLoad ? "metadata" : "none"}
                         className="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300"
                     />
                 ) : imageSrc ? (
                     <img
+                        loading="lazy"
                         src={imageSrc}
                         alt={title}
                         className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
@@ -66,6 +99,65 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoS
                 ) : null}
             </div>
             <span className="font-['Inter'] font-semibold opacity-70 text-xs tracking-wide">{category}</span>
+        </div>
+    );
+};
+
+const LocalTime = React.memo(() => {
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div className="flex flex-col items-center md:items-start group cursor-default">
+            <div className="font-['Inter'] font-medium text-xs text-zinc-500 mb-1">DAEGU, KR</div>
+            <div className="font-['Outfit'] font-black text-lg md:text-xl tracking-wider group-hover:text-[#39ff14] transition-colors">
+                {currentTime.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'Asia/Seoul'
+                })}
+            </div>
+        </div>
+    );
+});
+
+const FeaturedProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ project, onClick }) => {
+    const { ref, inView } = useInView({ rootMargin: '200px' });
+    const shouldLoad = inView;
+
+    return (
+        <div ref={ref} className={`${project.className} reveal-item`} onClick={onClick}>
+            <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
+                <img loading="lazy" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Abstract 3D" className="w-full h-full object-cover grayscale" />
+            </div>
+            <div className="relative z-10 w-full">
+                <div className="w-full h-[200px] bg-gray-100 border-2 border-black mb-4 relative overflow-hidden group">
+                    <video
+                        src={shouldLoad ? project.videoSrc : undefined}
+                        poster={project.poster || project.imageSrc}
+                        preload={shouldLoad ? "metadata" : "none"}
+                        autoPlay={shouldLoad}
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                    />
+                    <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
+                </div>
+            </div>
+            <div className="relative z-10 flex flex-col md:flex-row md:justify-between md:items-end gap-2 md:gap-0 pt-10 md:pt-0">
+                <h2 className="font-['Outfit'] font-black text-[11vw] md:text-5xl leading-[1.1] md:leading-[0.9] whitespace-pre-line">
+                    {project.title}
+                </h2>
+                <span className="font-['Inter'] font-semibold text-zinc-500 text-sm tracking-wide">{project.category}</span>
+            </div>
         </div>
     );
 };
@@ -80,14 +172,6 @@ const Portfolio = () => {
     const [isAboutOpen, setIsAboutOpen] = useState(false);
     const [isContactOpen, setIsContactOpen] = useState(false);
     const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-    const [currentTime, setCurrentTime] = useState(new Date());
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 1000);
-        return () => clearInterval(timer);
-    }, []);
 
     // Translation Helper
     const t = (content?: LocalizedString) => {
@@ -317,32 +401,7 @@ const Portfolio = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:auto-rows-[400px]">
                     {PROJECTS.map((project) => (
                         project.isFeatured ? (
-                            <div key={project.id} className={`${project.className} reveal-item`} onClick={() => setSelectedProject(project)}>
-                                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
-                                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Abstract 3D" className="w-full h-full object-cover grayscale" />
-                                </div>
-                                <div className="relative z-10 w-full">
-                                    <div className="w-full h-[200px] bg-gray-100 border-2 border-black mb-4 relative overflow-hidden group">
-                                        <video
-                                            src={project.videoSrc}
-                                            poster={project.poster || project.imageSrc}
-                                            preload="metadata"
-                                            autoPlay
-                                            loop
-                                            muted
-                                            playsInline
-                                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
-                                        />
-                                        <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
-                                    </div>
-                                </div>
-                                <div className="relative z-10 flex flex-col md:flex-row md:justify-between md:items-end gap-2 md:gap-0 pt-10 md:pt-0">
-                                    <h2 className="font-['Outfit'] font-black text-[11vw] md:text-5xl leading-[1.1] md:leading-[0.9] whitespace-pre-line">
-                                        {project.title}
-                                    </h2>
-                                    <span className="font-['Inter'] font-semibold text-zinc-500 text-sm tracking-wide">{project.category}</span>
-                                </div>
-                            </div>
+                            <FeaturedProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
                         ) : (
                             <HoverVideoCard
                                 key={project.id}
@@ -350,6 +409,7 @@ const Portfolio = () => {
                                 category={project.category}
                                 videoSrc={project.videoSrc}
                                 imageSrc={project.imageSrc}
+                                poster={project.poster}
                                 className={`${project.className} reveal-item`}
                                 videoHeight={project.videoHeight}
                                 onClick={() => setSelectedProject(project)}
@@ -360,7 +420,7 @@ const Portfolio = () => {
             </main>
 
             {/* The Arsenal Section */}
-            <section className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black">
+            <section className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black cv-auto">
                 <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                     {/* Left: Headline */}
                     <div>
@@ -384,7 +444,7 @@ const Portfolio = () => {
             </section>
 
             {/* LABS Section - Masonry Grid */}
-            <section id="labs" className="bg-white text-black py-20 px-6 md:px-16 border-t-4 border-black">
+            <section id="labs" className="bg-white text-black py-20 px-6 md:px-16 border-t-4 border-black cv-auto">
                 <div className="max-w-[1600px] mx-auto">
                     {/* Header */}
                     <div className="border-b-4 border-black mb-12 pb-4 reveal-item">
@@ -428,7 +488,7 @@ const Portfolio = () => {
                                                 {item.category || 'LAB'}
                                             </div>
                                             {item.imageUrl ? (
-                                                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                                                <img loading="lazy" src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className={`absolute inset-0 ${item.bgColor}`}></div>
                                             )}
@@ -537,6 +597,7 @@ const Portfolio = () => {
                                         />
                                     ) : selectedProject.imageSrc ? (
                                         <img
+                                            loading="lazy"
                                             src={selectedProject.imageSrc}
                                             alt={selectedProject.title}
                                             className={`w-full ${selectedProject.visualFit === 'contain' ? 'h-auto object-contain' : 'h-full object-cover'} grayscale group-hover:grayscale-0 transition-grayscale duration-500`}
@@ -580,6 +641,7 @@ const Portfolio = () => {
                                             )}
                                             {block.type === 'image' && block.src && (
                                                 <img
+                                                    loading="lazy"
                                                     src={block.src}
                                                     alt={`${selectedProject.title} detail ${i}`}
                                                     className="w-full h-auto rounded-sm mb-2 border border-gray-800"
@@ -807,7 +869,7 @@ const Portfolio = () => {
             )}
 
             {/* Footer */}
-            <footer id="contact" className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black font-['Outfit']">
+            <footer id="contact" className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black font-['Outfit'] cv-auto">
                 <div className="max-w-[1600px] mx-auto flex flex-col items-center text-center">
                     {/* Headline */}
                     <h2 className="font-bold text-xl md:text-2xl mb-8 tracking-widest text-zinc-500">HAVE AN IDEA?</h2>
@@ -858,17 +920,7 @@ const Portfolio = () => {
                         </a>
 
                         {/* 4. LOCAL TIME */}
-                        <div className="flex flex-col items-center md:items-start group cursor-default">
-                            <div className="font-['Inter'] font-medium text-xs text-zinc-500 mb-1">DAEGU, KR</div>
-                            <div className="font-['Outfit'] font-black text-lg md:text-xl tracking-wider group-hover:text-[#39ff14] transition-colors">
-                                {currentTime.toLocaleTimeString('en-US', {
-                                    hour12: false,
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    timeZone: 'Asia/Seoul'
-                                })}
-                            </div>
-                        </div>
+                        <LocalTime />
 
                         {/* 5. AVAILABILITY */}
                         <div className="flex items-center gap-2 font-['Outfit'] font-black text-lg md:text-xl tracking-wide cursor-default">

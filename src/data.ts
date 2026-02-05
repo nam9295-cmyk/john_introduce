@@ -44,7 +44,7 @@ export const PROJECTS: Project[] = [
         id: 1,
         title: "VERY GOOD  PACKAGING",
         category: "BLENDER / KEYSHOT",
-        videoSrc: "/box.mp4",
+        videoSrc: "/box_opt.mp4",
         poster: "/box_poster.jpg",
         className: "md:col-span-2 border-4 border-black p-6 flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-300 bg-white group cursor-pointer relative overflow-hidden",
         isFeatured: true,
@@ -72,7 +72,7 @@ export const PROJECTS: Project[] = [
                     ko: "02. 재질 및 조명 프로세스\n키샷(KeyShot)을 활용하여 다양한 재질 노드와 조명 설정을 실험하며 사실적인 텍스처를 구현했습니다."
                 }
             },
-            { type: 'video', src: "/process.mp4" },
+            { type: 'video', src: "/process_opt.mp4" },
 
             {
                 type: 'text',
@@ -106,7 +106,7 @@ export const PROJECTS: Project[] = [
         id: 2,
         title: "CHOCOLATE ORDER SYSTEM",
         category: "REACT / TAILWIND",
-        videoSrc: "/dashboard.mp4",
+        videoSrc: "/dashboard_opt.mp4",
         poster: "/dashboard_poster.jpg",
         className: "md:col-span-1 bg-black text-white hover:shadow-[8px_8px_0px_0px_rgba(113,113,122,1)]",
         description: {
@@ -122,7 +122,7 @@ export const PROJECTS: Project[] = [
         id: 3,
         title: "BLOG DETECTOR",
         category: "PYTHON / SELENIUM / STREAMLIT",
-        videoSrc: "/algo.mp4",
+        videoSrc: "/algo_opt.mp4",
         poster: "/algo_poster.jpg",
         hideModalVisual: true,
         className: "md:col-span-1 bg-gray-200 text-black hover:bg-[#edc5c4] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
@@ -143,7 +143,7 @@ export const PROJECTS: Project[] = [
             },
             {
                 type: 'video',
-                src: "/detector.mp4"
+                src: "/detector_opt.mp4"
             },
             {
                 type: 'text',
@@ -175,7 +175,7 @@ export const PROJECTS: Project[] = [
         title: "CONTENT AUTOMATION\nSYSTEM",
         category: "FIREBASE / GEMINI MCP / PENCIL.DEV",
         imageSrc: "/system_ideation.webp",
-        videoSrc: "/cyber.mp4",
+        videoSrc: "/cyber_opt.mp4",
         poster: "/cyber_poster.jpg",
         className: "md:col-span-2 bg-gray-200 text-black hover:bg-[#FFC497] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
         videoHeight: "h-[200px]",
