@@ -279,7 +279,12 @@ const Portfolio = () => {
                         {/* Visual */}
                         {/* Visual - Only render if media/iframe exists AND not hidden */}
                         {!selectedProject.hideModalVisual && ((selectedProject.type === 'interactive' && selectedProject.embedUrl) || selectedProject.videoSrc || selectedProject.imageSrc) ? (
-                            <div className={`w-full ${selectedProject.type === 'interactive' ? 'h-[400px] md:h-[600px]' : 'h-auto aspect-video'} border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
+                            <div className={`w-full ${selectedProject.type === 'interactive'
+                                    ? 'h-[400px] md:h-[600px]'
+                                    : selectedProject.visualFit === 'contain'
+                                        ? 'h-auto bg-black' // Remove aspect-video for contain
+                                        : 'h-auto aspect-video'
+                                } border-4 border-white bg-zinc-900 overflow-hidden relative group`}>
                                 {selectedProject.type === 'interactive' && selectedProject.embedUrl ? (
                                     <iframe
                                         src={selectedProject.embedUrl}
@@ -295,13 +300,13 @@ const Portfolio = () => {
                                         loop
                                         muted
                                         playsInline
-                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-grayscale duration-500"
+                                        className={`w-full ${selectedProject.visualFit === 'contain' ? 'h-auto object-contain' : 'h-full object-cover'} grayscale group-hover:grayscale-0 transition-grayscale duration-500`}
                                     />
                                 ) : selectedProject.imageSrc ? (
                                     <img
                                         src={selectedProject.imageSrc}
                                         alt={selectedProject.title}
-                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-grayscale duration-500"
+                                        className={`w-full ${selectedProject.visualFit === 'contain' ? 'h-auto object-contain' : 'h-full object-cover'} grayscale group-hover:grayscale-0 transition-grayscale duration-500`}
                                     />
                                 ) : null}
                             </div>

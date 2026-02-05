@@ -15,6 +15,7 @@ export interface Project {
     github?: string;
     gallery?: GalleryBlock[];
     hideModalVisual?: boolean;
+    visualFit?: 'cover' | 'contain';
 }
 
 export interface GalleryBlock {
@@ -124,14 +125,46 @@ export const PROJECTS: Project[] = [
     },
     {
         id: 4,
-        title: "WEBPAGE\nBLOG",
-        category: "WEBGL / SHADERS",
-        videoSrc: "/cyber.mp4",
+        title: "CONTENT AUTOMATION\nSYSTEM",
+        category: "FIREBASE / GEMINI MCP / PENCIL.DEV",
+        imageSrc: "/system_ideation.webp",
         className: "md:col-span-2 bg-gray-200 text-black hover:bg-[#FFC497] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
         videoHeight: "h-[200px]",
-        description: "A cyberpunk-inspired blog interface featuring GLSL shaders for background effects and unique typography treatments. A blend of high-tech aesthetics and brutalist design.",
-        link: "#",
-        tags: ["WebGL", "GLSL Shaders", "React-Three-Fiber", "Typography"]
+        description: "A customized content production ecosystem. It integrates Gemini MCP for AI-driven ideation and a Firebase backend for seamless asset management and publishing.",
+        link: "https://portfolio-2026.pages.dev/admin",
+        tags: ["Firebase", "Gemini MCP", "Pencil.dev", "TypeScript"],
+        type: "media",
+        gallery: [
+            {
+                type: 'text',
+                content: "01. AI-DRIVEN IDEATION\nCollaborating with Gemini MCP via Pencil.dev to rapidly prototype and refine content details with high precision."
+            },
+            { type: 'image', src: "/system_ideation.webp" },
+
+            {
+                type: 'text',
+                content: "02. VERRY GOOD ASSET MANAGER\nDeveloping a proprietary asset library to ensure consistent brand aesthetics while maximizing production speed."
+            },
+            { type: 'image', src: "/system_assets.webp" },
+
+            {
+                type: 'text',
+                content: "03. FIREBASE INTEGRATION\nImplemented a robust Firebase backend and a custom Admin Dashboard for easy, code-free content updates."
+            },
+            { type: 'image', src: "/system_admin.webp" },
+
+            {
+                type: 'code',
+                language: 'typescript',
+                content: `// Firebase Config for Content Stream
+const blogPost = {
+  title: "Verry Good Cacao Story",
+  assets: ["asset_01", "asset_02"],
+  status: "published",
+  createdAt: firebase.firestore.Timestamp.now()
+};`,
+            }
+        ]
     }
 ];
 
