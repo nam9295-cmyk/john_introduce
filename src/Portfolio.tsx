@@ -5,8 +5,8 @@ import { PROJECTS, LAB_ITEMS, ABOUT_DATA, Project, LocalizedString } from './dat
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqedzblr";
 
-const useInView = (options?: IntersectionObserverInit) => {
-    const ref = useRef<HTMLElement | null>(null);
+const useInView = <T extends HTMLElement>(options?: IntersectionObserverInit) => {
+    const ref = useRef<T | null>(null);
     const [inView, setInView] = useState(false);
     const optionsRef = useRef<IntersectionObserverInit | undefined>(options);
 
@@ -45,7 +45,7 @@ interface HoverVideoCardProps {
 
 const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoSrc, imageSrc, poster, className, videoHeight, onClick }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
-    const { ref: cardRef, inView } = useInView({ rootMargin: '200px' });
+    const { ref: cardRef, inView } = useInView<HTMLDivElement>({ rootMargin: '200px' });
     const shouldLoad = inView;
 
     const handleMouseEnter = () => {
@@ -129,7 +129,7 @@ const LocalTime = React.memo(() => {
 });
 
 const FeaturedProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ project, onClick }) => {
-    const { ref, inView } = useInView({ rootMargin: '200px' });
+    const { ref, inView } = useInView<HTMLDivElement>({ rootMargin: '200px' });
     const shouldLoad = inView;
 
     return (
