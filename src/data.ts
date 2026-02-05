@@ -53,31 +53,31 @@ export const PROJECTS: Project[] = [
                 type: 'text',
                 content: "01. STRUCTURE DESIGN\nFirst, I designed the base geometry using Blender to ensure structural integrity."
             },
-            { type: 'image', src: "/public/model.webp" },
+            { type: 'image', src: "/model.webp" },
 
             {
                 type: 'text',
                 content: "02. MATERIAL & LIGHTING PROCESS\nUsing KeyShot, I experimented with various material nodes and lighting setups to achieve a realistic texture."
             },
-            { type: 'video', src: "/public/process.mp4" },
+            { type: 'video', src: "/process.mp4" },
 
             {
                 type: 'text',
                 content: "03. VISUALIZATION\nThe final rendering focuses on the clean, minimal aesthetic of the brand."
             },
-            { type: 'image', src: "/public/package.webp" },
+            { type: 'image', src: "/package.webp" },
 
             {
                 type: 'text',
                 content: "04. PRODUCTION READY\nI also created the precise die-line (blueprint) for actual mass production."
             },
-            { type: 'image', src: "/public/dieline.webp" },
+            { type: 'image', src: "/dieline.webp" },
 
             {
                 type: 'text',
                 content: "05. CONTEXT\nA lifestyle mockup showing how the product looks in a real-world environment."
             },
-            { type: 'image', src: "/public/lifestyle.webp" }
+            { type: 'image', src: "/lifestyle.webp" }
         ]
     },
     {
