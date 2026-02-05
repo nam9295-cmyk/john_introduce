@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
-import { ArrowUpRight, Github, Twitter } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
 import Marquee from 'react-fast-marquee';
+import { PROJECTS, LAB_ITEMS } from './data';
 
 interface HoverVideoCardProps {
     title: string;
@@ -57,6 +58,17 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({ title, category, videoS
 };
 
 const Portfolio = () => {
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const scrollLeft = e.currentTarget.scrollLeft;
+        // Card width is 85vw.
+        // Approximate calculation: scrollLeft / (width * 0.85)
+        // Or cleaner: calculate based on the first child's width if possible, but simplified math works for UX
+        const index = Math.round(scrollLeft / (window.innerWidth * 0.85));
+        setCurrentSlide(index);
+    };
     return (
         <div className="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white font-['Outfit']">
 
@@ -64,15 +76,35 @@ const Portfolio = () => {
             <nav className="sticky top-0 z-50 bg-white border-b-4 border-black px-6 md:px-16 h-20 flex items-center justify-between">
                 <div className="font-['Outfit'] font-black text-3xl tracking-tighter">JD.26</div>
                 <div className="hidden md:flex gap-10">
-                    {['WORKS', 'LABS', 'ABOUT'].map((link) => (
-                        <a key={link} href="#" className="font-['Outfit'] font-extrabold text-lg hover:underline decoration-4 underline-offset-4">
+                    {['WORKS', 'LABS', 'ABOUT', 'CONTACT'].map((link) => (
+                        <a key={link} href={`#${link.toLowerCase()}`} className="font-['Outfit'] font-extrabold text-lg hover:underline decoration-4 underline-offset-4">
                             {link}
                         </a>
                     ))}
                 </div>
-                {/* Mobile Menu Icon Placeholder */}
-                <div className="md:hidden font-['Outfit'] font-bold text-xl">MENU</div>
+
+                {/* Mobile Menu Toggle Button */}
+                <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="md:hidden border-2 border-black p-2 hover:bg-black hover:text-white transition-colors z-50"
+                >
+                    {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
             </nav>
+
+            {/* Mobile Full-Screen Menu Overlay */}
+            <div className={`fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden`}>
+                {['WORKS', 'LABS', 'ABOUT', 'CONTACT'].map((link) => (
+                    <a
+                        key={link}
+                        href={`#${link.toLowerCase()}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="font-['Outfit'] font-black text-6xl text-white hover:text-[#39ff14] transition-colors tracking-tighter"
+                    >
+                        {link}
+                    </a>
+                ))}
+            </div>
 
             {/* Marquee */}
             <div className="bg-black text-white h-[60px] border-b-4 border-black flex items-center overflow-hidden">
@@ -87,85 +119,155 @@ const Portfolio = () => {
 
             {/* Main Content - Bento Grid */}
             <main className="p-6 md:p-16 max-w-[1600px] mx-auto">
-                <div className="flex flex-col gap-8">
-
-                    {/* Row 1 */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-auto md:h-[400px]">
-                        {/* Card 1: 3D Spatial */}
-                        <div className="md:col-span-2 border-4 border-black p-6 flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-300 bg-white group cursor-pointer relative overflow-hidden">
-                            <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
-                                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Abstract 3D" className="w-full h-full object-cover grayscale" />
-                            </div>
-                            <div className="relative z-10 w-full">
-                                <div className="w-full h-[200px] bg-gray-100 border-2 border-black mb-4 relative overflow-hidden group">
-                                    {/* 비디오 태그 시작 */}
-                                    <video
-                                        src="/box.mp4"       // public 폴더에 넣은 파일 이름 (앞에 / 꼭 붙이기)
-                                        autoPlay             // 자동 재생
-                                        loop                 // 무한 반복
-                                        muted                // 소리 끔 (이게 있어야 자동재생됨!)
-                                        playsInline          // 모바일에서도 전체화면 안 되고 그 자리에서 재생
-                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
-                                    />
-                                    {/* 비디오 태그 끝 */}
-
-                                    {/* 위에 덮어씌우는 효과 (선택사항: 원하면 남겨두고 아니면 지워) */}
-                                    <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:auto-rows-[400px]">
+                    {PROJECTS.map((project) => (
+                        project.isFeatured ? (
+                            <div key={project.id} className={project.className}>
+                                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
+                                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="Abstract 3D" className="w-full h-full object-cover grayscale" />
+                                </div>
+                                <div className="relative z-10 w-full">
+                                    <div className="w-full h-[200px] bg-gray-100 border-2 border-black mb-4 relative overflow-hidden group">
+                                        <video
+                                            src={project.videoSrc}
+                                            autoPlay
+                                            loop
+                                            muted
+                                            playsInline
+                                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                                        />
+                                        <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
+                                    </div>
+                                </div>
+                                <div className="relative z-10 flex justify-between items-end">
+                                    <h2 className="font-['Outfit'] font-black text-4xl md:text-5xl leading-[0.9] whitespace-pre-line">
+                                        {project.title}
+                                    </h2>
+                                    <span className="font-['Inter'] font-semibold text-zinc-500 text-sm tracking-wide">{project.category}</span>
                                 </div>
                             </div>
-                            <div className="relative z-10 flex justify-between items-end">
-                                <h2 className="font-['Outfit'] font-black text-4xl md:text-5xl leading-[0.9]">
-                                    3D SPATIAL<br />EXPLORATION
-                                </h2>
-                                <span className="font-['Inter'] font-semibold text-zinc-500 text-sm tracking-wide">THREE.JS / BLENDER</span>
-                            </div>
-                        </div>
-
-                        {/* Card 2: Neo-Dash */}
-                        {/* Card 2: Neo-Dash */}
-                        <HoverVideoCard
-                            title="CHOCOLAT-ORDER  SYSTEM"
-                            category="REACT / TAILWIND"
-                            videoSrc="/dashboard.mp4"
-                        />
-                    </div>
-
-                    {/* Row 2 */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 h-auto md:h-[400px]">
-                        {/* Card 3: Algo-Viz */}
-                        {/* Card 3: Algo-Viz */}
-                        <HoverVideoCard
-                            title={`BLOG\nDETECTOR`}
-                            category="D3.JS / TYPESCRIPT"
-                            videoSrc="/algo.mp4"
-                            className="md:col-span-1 bg-gray-200 text-black hover:bg-[#edc5c4] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
-                        />
-
-                        {/* Card 4: Cybernetic Interface */}
-                        <HoverVideoCard
-                            title={`WEBPAGE\nBLOG`}
-                            category="WEBGL / SHADERS"
-                            videoSrc="/cyber.mp4"
-                            className="md:col-span-2 bg-gray-200 text-black hover:bg-[#FFC497] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
-                            videoHeight="h-[200px]"
-                        />
-                    </div>
-
+                        ) : (
+                            <HoverVideoCard
+                                key={project.id}
+                                title={project.title}
+                                category={project.category}
+                                videoSrc={project.videoSrc}
+                                className={project.className}
+                                videoHeight={project.videoHeight}
+                            />
+                        )
+                    ))}
                 </div>
             </main>
 
-            {/* Footer */}
-            <footer className="bg-black text-white border-t-4 border-black py-16 px-6 md:px-16 flex flex-col md:flex-row justify-between items-center gap-8">
-                <div className="font-['Inter'] font-semibold text-sm tracking-wider">
-                    © 2026 JOHN DOE. NO RIGHTS RESERVED.
+            {/* The Arsenal Section */}
+            <section className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black">
+                <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                    {/* Left: Headline */}
+                    <div>
+                        <h2 className="font-['Outfit'] font-black text-6xl md:text-8xl leading-[0.9] tracking-tighter">
+                            BRIDGING<br />DESIGN &<br />TECHNOLOGY
+                        </h2>
+                    </div>
+
+                    {/* Right: The Arsenal */}
+                    <div>
+                        <h3 className="font-['Outfit'] font-bold text-2xl mb-8 tracking-widest text-zinc-500">THE ARSENAL</h3>
+                        <div className="flex flex-wrap gap-3">
+                            {['Photoshop', 'Illustrator', 'After Effects', 'Premiere Pro', 'Blender', 'SketchUp', 'KeyShot 11', 'React', 'Tailwind', 'Antigravity'].map((tool) => (
+                                <span key={tool} className="border-2 border-white px-4 py-2 font-['Outfit'] font-bold text-lg tracking-wide hover:bg-[#39ff14] hover:text-black hover:border-[#39ff14] transition-all duration-300 cursor-default">
+                                    {tool}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-                <div className="flex gap-8">
-                    <a href="#" className="flex items-center gap-2 font-['Outfit'] font-bold hover:text-zinc-300 transition-colors">
-                        <Twitter className="w-5 h-5" /> TWITTER
+            </section>
+
+            {/* LABS Section - Masonry Grid */}
+            <section id="labs" className="bg-white text-black py-20 px-6 md:px-16 border-t-4 border-black">
+                <div className="max-w-[1600px] mx-auto">
+                    {/* Header */}
+                    <div className="border-b-4 border-black mb-12 pb-4">
+                        <h2 className="font-['Outfit'] font-black text-5xl md:text-7xl tracking-tighter mb-2">
+                            LABORATORY // DAILY LOG
+                        </h2>
+                        <p className="font-['Inter'] font-medium text-lg text-zinc-600 tracking-wide">
+                            Raw experiments, code snippets, and daily renders.
+                        </p>
+                    </div>
+
+                    {/* Masonry Grid (Slider on Mobile) */}
+                    <div
+                        onScroll={handleScroll}
+                        className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 md:block md:columns-3 md:gap-8 md:space-y-8 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden"
+                    >
+                        {LAB_ITEMS.map((item) => (
+                            <div key={item.id} className="min-w-[85vw] snap-center md:min-w-0 md:break-inside-avoid md:snap-align-none bg-white border-4 border-black p-4 hover:-translate-y-2 hover:rotate-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 cursor-pointer">
+                                <div className={`bg-zinc-200 w-full ${item.height} mb-4 border-2 border-black relative overflow-hidden group`}>
+                                    <div className={`absolute inset-0 ${item.bgColor}`}></div>
+                                </div>
+                                <div className="flex justify-between items-end font-['Outfit']">
+                                    <span className="font-bold text-xl">{item.title}</span>
+                                    <span className="font-bold text-sm text-zinc-500">{item.date}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Pagination Dots (Mobile Only) */}
+                    <div className="flex justify-center gap-2 mt-4 md:hidden">
+                        {[0, 1, 2, 3, 4, 5].map((index) => (
+                            <div
+                                key={index}
+                                className={`w-3 h-3 transition-colors duration-300 ${currentSlide === index ? 'bg-black' : 'bg-gray-300'}`}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer id="contact" className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black font-['Outfit']">
+                <div className="max-w-[1600px] mx-auto flex flex-col items-center text-center">
+                    {/* Headline */}
+                    <h2 className="font-bold text-xl md:text-2xl mb-8 tracking-widest text-zinc-500">HAVE AN IDEA?</h2>
+
+                    {/* Main Action - Email Link */}
+                    <a
+                        href="mailto:lab@verygood-chocolate.com"
+                        className="block w-full"
+                    >
+                        <h2 className="text-[5vw] md:text-[7vw] font-black leading-none hover:text-[#edc5c4] transition-colors duration-300 break-words">
+                            LAB@VERYGOOD-<br className="md:hidden" />CHOCOLATE.COM
+                        </h2>
                     </a>
-                    <a href="#" className="flex items-center gap-2 font-['Outfit'] font-bold hover:text-zinc-300 transition-colors">
-                        <Github className="w-5 h-5" /> GITHUB
-                    </a>
+
+                    {/* Bottom Row */}
+                    <div className="w-full flex flex-col md:flex-row justify-between items-center gap-8 border-t-2 border-zinc-800 pt-8">
+                        {/* Copyright */}
+                        <div className="font-['Inter'] font-semibold text-sm tracking-wider text-zinc-500">
+                            © 2026 JOHN DOE.
+                        </div>
+
+                        {/* Socials */}
+                        <div className="flex gap-8">
+                            <a href="#" className="flex items-center gap-2 font-bold text-lg hover:text-[#39ff14] transition-colors">
+                                INSTAGRAM
+                            </a>
+                            <a href="#" className="flex items-center gap-2 font-bold text-lg hover:text-[#39ff14] transition-colors">
+                                GITHUB
+                            </a>
+                        </div>
+
+                        {/* Back to Top */}
+                        <button
+                            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                            className="font-bold text-lg hover:text-[#39ff14] transition-colors"
+                        >
+                            BACK TO TOP ↑
+                        </button>
+                    </div>
                 </div>
             </footer>
         </div>
