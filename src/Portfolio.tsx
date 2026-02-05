@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ArrowUpRight, Menu, X, ArrowRight } from 'lucide-react';
 import Marquee from 'react-fast-marquee';
-import { PROJECTS, LAB_ITEMS, Project, LocalizedString } from './data';
+import { PROJECTS, LAB_ITEMS, ABOUT_DATA, Project, LocalizedString } from './data';
 
 interface HoverVideoCardProps {
     title: string;
@@ -75,6 +75,7 @@ const Portfolio = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isIframeLoading, setIsIframeLoading] = useState(true);
     const [lang, setLang] = useState<'en' | 'ko'>('en');
+    const [isAboutOpen, setIsAboutOpen] = useState(false);
 
     // Translation Helper
     const t = (content?: LocalizedString) => {
@@ -105,14 +106,36 @@ const Portfolio = () => {
 
     // Lock body scroll when modal is open
     useEffect(() => {
-        if (selectedProject) {
+        if (selectedProject || isAboutOpen) {
             document.body.style.overflow = 'hidden';
             setIsIframeLoading(true); // Reset loader on open
         } else {
             document.body.style.overflow = 'unset';
             setIsIframeLoading(true); // Reset loader on close too just in case
         }
-    }, [selectedProject]);
+    }, [selectedProject, isAboutOpen]);
+
+    // About Modal History/Back Button Logic
+    useEffect(() => {
+        if (isAboutOpen) {
+            window.history.pushState({ aboutOpen: true }, '');
+
+            const handlePopState = () => {
+                setIsAboutOpen(false);
+            };
+
+            window.addEventListener('popstate', handlePopState);
+            return () => window.removeEventListener('popstate', handlePopState);
+        }
+    }, [isAboutOpen]);
+
+    const handleAboutClose = () => {
+        if (window.history.state?.aboutOpen) {
+            window.history.back();
+        } else {
+            setIsAboutOpen(false);
+        }
+    };
 
     // Mobile Back Button Support (History API)
     useEffect(() => {
@@ -161,7 +184,17 @@ const Portfolio = () => {
                 <div className="flex items-center gap-4 md:gap-8">
                     <div className="hidden md:flex gap-10">
                         {['WORKS', 'LABS', 'ABOUT', 'CONTACT'].map((link) => (
-                            <a key={link} href={`#${link.toLowerCase()}`} className="font-['Outfit'] font-extrabold text-lg hover:underline decoration-4 underline-offset-4">
+                            <a
+                                key={link}
+                                href={`#${link.toLowerCase()}`}
+                                onClick={(e) => {
+                                    if (link === 'ABOUT') {
+                                        e.preventDefault();
+                                        setIsAboutOpen(true);
+                                    }
+                                }}
+                                className="font-['Outfit'] font-extrabold text-lg hover:underline decoration-4 underline-offset-4"
+                            >
                                 {link}
                             </a>
                         ))}
@@ -191,7 +224,13 @@ const Portfolio = () => {
                     <a
                         key={link}
                         href={`#${link.toLowerCase()}`}
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={(e) => {
+                            setIsMenuOpen(false);
+                            if (link === 'ABOUT') {
+                                e.preventDefault();
+                                setIsAboutOpen(true);
+                            }
+                        }}
                         className="font-['Outfit'] font-black text-6xl text-white hover:text-[#39ff14] transition-colors tracking-tighter"
                     >
                         {link}
@@ -509,6 +548,122 @@ const Portfolio = () => {
                     </div>
                 )
             }
+
+            {/* About Modal */}
+            {isAboutOpen && (
+                <div className="fixed inset-0 z-[60] bg-white text-black overflow-y-auto font-['Outfit'] animate-fadeIn">
+                    {/* Close Button */}
+                    <button
+                        onClick={handleAboutClose}
+                        className="fixed top-6 right-6 z-50 p-2 bg-white border-2 border-black rounded-full hover:bg-black hover:text-white transition-colors duration-300 transform hover:scale-110"
+                    >
+                        <X size={32} />
+                    </button>
+
+                    <div className="max-w-[1200px] mx-auto p-6 md:p-16 pt-20 md:pt-20 flex flex-col gap-20">
+                        {/* Header Section */}
+                        <div className="border-b-4 border-black pb-12">
+                            <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[0.8] uppercase">
+                                About<br />John Doe
+                            </h1>
+                            <p className="text-2xl md:text-4xl font-bold leading-tight max-w-4xl text-zinc-800">
+                                {t(ABOUT_DATA.slogan)}
+                            </p>
+                        </div>
+
+                        {/* Narrative */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 font-['Inter'] text-lg md:text-xl font-medium leading-relaxed text-zinc-700">
+                            <div className="space-y-6">
+                                {ABOUT_DATA.narrative[lang].slice(0, 2).map((p: string, i: number) => (
+                                    <p key={i}>{p}</p>
+                                ))}
+                            </div>
+                            <div className="space-y-6">
+                                {ABOUT_DATA.narrative[lang].slice(2).map((p: string, i: number) => (
+                                    <p key={i}>{p}</p>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Timeline */}
+                        <div>
+                            <h2 className="text-4xl font-black mb-8 border-l-8 border-[#ccff00] pl-4">TIMELINE</h2>
+                            <div className="flex flex-col border-t-2 border-black">
+                                {ABOUT_DATA.timeline.map((item, i) => (
+                                    <div key={i} className="flex flex-col md:flex-row md:items-baseline py-6 border-b-2 border-zinc-200 hover:bg-zinc-50 transition-colors group">
+                                        <div className="md:w-1/4 text-2xl font-black text-[#ccff00] group-hover:text-black transition-colors">{item.year}</div>
+                                        <div className="md:w-1/4 text-xl font-bold">{item.role}</div>
+                                        <div className="md:w-2/4 text-zinc-500 font-['Inter']">{lang === 'en' ? item.desc : item.descKo}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Skills Grid */}
+                        <div>
+                            <h2 className="text-4xl font-black mb-8 border-l-8 border-[#39ff14] pl-4">TOOLS OF CHOICE</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {/* Design */}
+                                <div className="border-4 border-black p-6 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow bg-zinc-50">
+                                    <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
+                                        <div className="w-4 h-4 bg-pink-500"></div>
+                                        3D & DESIGN
+                                    </h3>
+                                    <ul className="space-y-2 font-['Inter'] font-bold text-zinc-600">
+                                        {ABOUT_DATA.skills.design.map((skill) => (
+                                            <li key={skill} className="border-b border-zinc-300 pb-1">{skill}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Dev */}
+                                <div className="border-4 border-black p-6 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow bg-zinc-50 flex flex-col justify-between">
+                                    <div>
+                                        <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
+                                            <div className="w-4 h-4 bg-cyan-500"></div>
+                                            FRONT-END & VIBE CODING
+                                        </h3>
+                                        <ul className="space-y-3 font-['Inter'] font-bold text-zinc-600">
+                                            {ABOUT_DATA.skills.dev.map((skill) => (
+                                                <li key={skill} className="border-b border-zinc-300 pb-1">
+                                                    {skill.includes('Vibe Coding') ? (
+                                                        <span>
+                                                            Intelligence Layer / <span className="bg-[#ccff00] text-black px-1 ml-1">VIBE CODING</span>
+                                                        </span>
+                                                    ) : (
+                                                        skill
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <p className="mt-6 text-sm text-zinc-500 font-medium italic border-t-2 border-zinc-200 pt-4">
+                                        "Using AI to bridge the gap between imagination and digital reality at the speed of thought."
+                                    </p>
+                                </div>
+
+                                {/* Physical */}
+                                <div className="border-4 border-black p-6 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-shadow bg-zinc-50">
+                                    <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
+                                        <div className="w-4 h-4 bg-orange-500"></div>
+                                        PHYSICAL
+                                    </h3>
+                                    <ul className="space-y-2 font-['Inter'] font-bold text-zinc-600">
+                                        {ABOUT_DATA.skills.physical.map((skill) => (
+                                            <li key={skill} className="border-b border-zinc-300 pb-1">{skill}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer in Modal */}
+                        <div className="text-center pt-12 pb-20">
+                            <button onClick={handleAboutClose} className="text-xl font-bold underline hover:text-[#ccff00] transition-colors">CLOSE ABOUT</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Footer */}
             <footer id="contact" className="bg-black text-white py-20 px-6 md:px-16 border-t-4 border-black font-['Outfit']">

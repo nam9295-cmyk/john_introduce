@@ -262,3 +262,36 @@ export const LAB_ITEMS: LabItem[] = [
     // 2020
     { id: 1, title: "CAD SYSTEM ARCHITECTURE", date: "JAN 2020", category: "CAD", imageUrl: "https://res.cloudinary.com/dmeumcp9i/image/upload/v1770275927/RYAN.webp", height: "h-[320px]", bgColor: "bg-gray-800", year: "2020" }
 ];
+
+export const ABOUT_DATA = {
+    slogan: {
+        en: "Engineering Mind, Designer's Eye, Craftsman's Hand.",
+        ko: "공학자의 사고, 디자이너의 눈, 장인의 손길."
+    },
+    narrative: {
+        en: [
+            "My journey began in 2007 at Hyundai Mobis, where I engineered logistics systems and learned the precision of large-scale operations. But specific blueprint wasn't enough for my creative hunger.",
+            "I pivoted to entrepreneurship, leading HWproject as CEO, then diving into the sensory world of F&B as a Chef & Owner. These years taught me that 'User Experience' isn't just digital—it's taste, service, and atmosphere.",
+            "In 2020, I returned to the physical realm with professional woodworking, mastering the patience and detail required to turn raw material into functional art.",
+            "Now, as a Creative Director & Developer, I synthesize all these disciplines. I build digital products with the structural integrity of an engineer, the aesthetic of a designer, and the soul of a craftsman."
+        ],
+        ko: [
+            "저의 여정은 2007년 현대모비스에서 시작되었습니다. 그곳에서 물류 시스템을 설계하며 대규모 운영의 정밀함을 배웠습니다. 하지만 정해진 청사진만으로는 저의 창조적 갈증을 채울 수 없었습니다.",
+            "저는 기업가로 전향하여 HWproject의 CEO를 역임했고, 이후 셰프이자 오너로서 감각적인 F&B 세계에 뛰어들었습니다. 이 시기를 통해 '사용자 경험'이 단순한 디지털이 아니라 맛, 서비스, 분위기라는 것을 배웠습니다.",
+            "2020년, 저는 전문 목공예의 길로 들어서며 원자재를 기능적인 예술로 승화시키는 데 필요한 인내와 디테일을 익혔습니다.",
+            "이제 저는 크리에이티브 디렉터이자 개발자로서 이 모든 분야를 통합합니다. 저는 엔지니어의 구조적 무결성, 디자이너의 미적 감각, 그리고 장인의 영혼을 담아 디지털 제품을 만듭니다."
+        ]
+    },
+    timeline: [
+        { year: "2024-PRES", role: "Creative Director & Dev", desc: "Very Goût / AI Development", descKo: "베리구 / AI 개발" },
+        { year: "2020", role: "Woodworker", desc: "Professional Craftsmanship / Ottchil", descKo: "전문 목공예 / 옻칠" },
+        { year: "2014-2019", role: "Chef & Owner", desc: "F&B Management & Branding", descKo: "F&B 경영 및 브랜딩" },
+        { year: "2012", role: "CEO", desc: "HWproject (Auto Parts Import)", descKo: "HWproject (자동차 부품 수입)" },
+        { year: "2007", role: "Engineer", desc: "Hyundai Mobis (Logistics)", descKo: "현대모비스 (물류 엔지니어링)" }
+    ],
+    skills: {
+        design: ["Blender", "KeyShot", "Affinity Suite", "Photoshop", "Illustrator"],
+        dev: ["Dynamic Web Interface (React/TS)", "Intelligence Layer / Vibe Coding", "Cloud Deployment & Database"],
+        physical: ["Woodworking", "Furniture Design", "Lacquerware (Ottchil)", "CNC Machining"]
+    }
+};
